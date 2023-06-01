@@ -2,6 +2,7 @@ import { importx, resolve } from "@discordx/importer"
 import { AnyEntity, EntityClass } from "@mikro-orm/core"
 import fs from "fs"
 import semver from "semver"
+import { sep } from "node:path" 
 import { BaseTranslation } from "typesafe-i18n"
 
 import { generalConfig } from "@configs"
@@ -45,7 +46,7 @@ export class Plugin {
         if (!semver.valid(pluginConfig.version)) return this.stopLoad("Invalid version in plugin.json")
 
         // check if the plugin is compatible with the current version of Tscord
-        if (!semver.satisfies(getTscordVersion(), pluginConfig.tscordRequiredVersion)) return this.stopLoad(`Incompatible with the current version of Tscord (v${getTscordVersion()})`)
+        if (!semver.satisfies(semver.coerce(getTscordVersion())!, pluginConfig.tscordRequiredVersion)) return this.stopLoad(`Incompatible with the current version of Tscord (v${getTscordVersion()})`)
 
         // assign common values
         this._name = pluginConfig.name
@@ -81,9 +82,9 @@ export class Plugin {
     private async getTranslations(): Promise<{ [key: string]: BaseTranslation }> {
         const translations: { [key: string]: BaseTranslation } = {}
 
-        const localesPath = resolve(this._path + "/i18n/*.{ts,js}")
+        const localesPath = await resolve(this._path + "/i18n/*.{ts,js}")
         for (const localeFile of localesPath) {
-            const locale = localeFile.split("/").at(-1)?.split(".")[0] || "unknown"
+            const locale = localeFile.split(sep).at(-1)?.split(".")[0] || "unknown"
 
             translations[locale] = (await import(localeFile)).default
         }
