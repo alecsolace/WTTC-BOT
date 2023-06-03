@@ -1,18 +1,29 @@
 import 'dotenv/config'
 import 'reflect-metadata'
 
-import { importx } from "@discordx/importer"
+import {importx} from "@discordx/importer"
 import discordLogs from "discord-logs"
-import { Client, DIService, tsyringeDependencyRegistryEngine } from "discordx"
-import { container } from "tsyringe"
+import {Client, DIService, tsyringeDependencyRegistryEngine} from "discordx"
+import {container} from "tsyringe"
 
-import { Server } from "@api/server"
-import { apiConfig, generalConfig, websocketConfig } from "@configs"
-import { NoBotTokenError } from "@errors"
-import { Database, ErrorHandler, EventManager, ImagesUpload, Logger, PluginsManager, Store, WebSocket } from "@services"
-import { initDataTable, resolveDependency } from "@utils/functions"
-import { clientConfig } from "./client"
-import { RequestContext } from '@mikro-orm/core'
+import {Server} from "@api/server"
+import {apiConfig, generalConfig, websocketConfig} from "@configs"
+import {NoBotTokenError} from "@errors"
+import {
+    Database,
+    ErrorHandler,
+    EventManager,
+    Google,
+    ImagesUpload,
+    Logger,
+    PluginsManager,
+    Store,
+    WebSocket
+} from "@services"
+import {initDataTable, resolveDependency} from "@utils/functions"
+import {clientConfig} from "./client"
+import {RequestContext} from '@mikro-orm/core'
+import fs from "fs";
 
 async function run() {
 
@@ -21,7 +32,7 @@ async function run() {
 
     // init error handler
     await resolveDependency(ErrorHandler)
-    
+
     // init plugins 
     const pluginManager = await resolveDependency(PluginsManager)
 
@@ -33,23 +44,35 @@ async function run() {
     console.log('\n')
     logger.startSpinner('Starting...')
 
+    // get members
+    /*const google = await resolveDependency(Google)
+    google.getMembers().then(x => {
+
+        fs.writeFile(
+            'members.json', JSON.stringify(x), "utf-8", (error) => {
+                if (error) logger.logError(error, "Exception")
+                logger.console('Members file updated')
+            }
+        )
+    })*/
+
     // init the database
     const db = await resolveDependency(Database)
     await db.initialize()
-    
+
     // init the client
     DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container)
     const client = new Client(clientConfig)
-    
+
     // Load all new events
-    discordLogs(client, { debug: false })
+    discordLogs(client, {debug: false})
     container.registerInstance(Client, client)
-    
+
     // import all the commands and events
     await importx(__dirname + "/{events,commands}/**/*.{ts,js}")
     await pluginManager.importCommands()
     await pluginManager.importEvents()
-    
+
     RequestContext.create(db.orm.em, async () => {
 
         // init the data table if it doesn't exist
@@ -83,7 +106,7 @@ async function run() {
                     const imagesUpload = await resolveDependency(ImagesUpload)
                     await imagesUpload.syncWithDatabase()
                 }
-        
+
                 const store = await container.resolve(Store)
                 store.select('ready').subscribe(async (ready) => {
 
@@ -105,7 +128,7 @@ async function run() {
                 process.exit(1)
             })
     })
-    
+
 }
 
 run()

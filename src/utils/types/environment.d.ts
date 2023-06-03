@@ -5,7 +5,7 @@ declare global {
         NODE_ENV: 'development' | 'production'
         
         BOT_TOKEN: string
-        TEST_GUILD_ID: string
+        GUILD_ID: string
         BOT_OWNER_ID: string
         
         DATABASE_HOST: string
