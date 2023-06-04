@@ -9,25 +9,14 @@ import {container} from "tsyringe"
 import {Server} from "@api/server"
 import {apiConfig, generalConfig, websocketConfig} from "@configs"
 import {NoBotTokenError} from "@errors"
-import {
-    Database,
-    ErrorHandler,
-    EventManager,
-    Google,
-    ImagesUpload,
-    Logger,
-    PluginsManager,
-    Store,
-    WebSocket
-} from "@services"
+import {Database, ErrorHandler, EventManager, ImagesUpload, Logger, PluginsManager, Store, WebSocket} from "@services"
 import {initDataTable, resolveDependency} from "@utils/functions"
 import {clientConfig} from "./client"
 import {RequestContext} from '@mikro-orm/core'
-import fs from "fs";
 
 async function run() {
 
-    // init logger, pluginsmanager and error handler
+    // init logger, plugin manager and error handler
     const logger = await resolveDependency(Logger)
 
     // init error handler
@@ -40,21 +29,9 @@ async function run() {
     await pluginManager.loadPlugins()
     await pluginManager.syncTranslations()
 
-    // strart spinner
+    // start spinner
     console.log('\n')
     logger.startSpinner('Starting...')
-
-    // get members
-    /*const google = await resolveDependency(Google)
-    google.getMembers().then(x => {
-
-        fs.writeFile(
-            'members.json', JSON.stringify(x), "utf-8", (error) => {
-                if (error) logger.logError(error, "Exception")
-                logger.console('Members file updated')
-            }
-        )
-    })*/
 
     // init the database
     const db = await resolveDependency(Database)
@@ -65,7 +42,7 @@ async function run() {
     const client = new Client(clientConfig)
 
     // Load all new events
-    discordLogs(client, {debug: false})
+    await discordLogs(client, {debug: false})
     container.registerInstance(Client, client)
 
     // import all the commands and events
@@ -118,7 +95,7 @@ async function run() {
                             .every(value => value === true)
                     ) {
                         const eventManager = await resolveDependency(EventManager)
-                        eventManager.emit('templateReady') // the template is fully ready!
+                        await eventManager.emit('templateReady') // the template is fully ready!
                     }
                 })
 
@@ -131,4 +108,4 @@ async function run() {
 
 }
 
-run()
+run();

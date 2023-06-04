@@ -13,7 +13,7 @@ export const generalConfig: GeneralConfigType = {
     links: {
         invite: 'https://www.change_invite_link_here.com',
         supportServer: 'https://discord.com/your_invitation_link',
-        gitRemoteRepo: 'https://github.com/barthofu/tscord',
+        gitRemoteRepo: 'https://github.com/alecsolace/WTTC-Bot',
     },
 
     automaticUploadImagesToImgur: false, // enable or not the automatic assets upload

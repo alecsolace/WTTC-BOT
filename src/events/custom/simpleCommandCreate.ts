@@ -57,7 +57,7 @@ export default class SimpleCommandCreateEvent {
             /**
              * @param {SimpleCommandMessage} command
              */
-            this.eventManager.emit('simpleCommandCreate', command)
+           await this.eventManager.emit('simpleCommandCreate', command)
         }
     } 
 }
