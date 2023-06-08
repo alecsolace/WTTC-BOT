@@ -9,17 +9,21 @@ import fs from "fs";
 
 @singleton()
 export class Google {
-    private doc = new GoogleSpreadsheet(process.env["SPREADSHEET_ID"]);
+    private doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID as string);
 
     constructor(private logger: Logger) {
+        this.logger.console(process.env.SPREADSHEET_ID as string, "info")
+        this.logger.console(process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string, "info")
+        this.logger.console(process.env.GOOGLE_PRIVATE_KEY as string, "info")
+
         this.accessSpreadsheet().catch((e) => this.logger.file(e, "error"));
         this.logger.console("Service Google invoked !", "info");
     }
 
     async accessSpreadsheet() {
         await this.doc.useServiceAccountAuth({
-            client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!,
-            private_key: process.env.GOOGLE_PRIVATE_KEY!,
+            client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL! as string,
+            private_key: process.env.GOOGLE_PRIVATE_KEY! as string,
         });
         await this.doc.loadInfo();
     }
