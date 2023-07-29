@@ -1,13 +1,24 @@
 import {Client} from 'discordx'
 import {Category} from '@discordx/utilities'
-import {ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction} from 'discord.js'
+import {
+    ApplicationCommandOptionType,
+    AutocompleteFocusedOption,
+    AutocompleteInteraction,
+    CommandInteraction
+} from 'discord.js'
 
 import {Discord, Slash, SlashOption} from '@decorators'
 import {Guard} from '@guards'
+import {injectable} from "tsyringe";
+import {Google, Logger} from "@services";
 
 @Discord()
 @Category('General')
+@injectable()
 export default class ShipCommand {
+
+    constructor(private google: Google) {
+    }
 
     @Slash({
         name: 'ship',
@@ -32,7 +43,53 @@ export default class ShipCommand {
         {localize}: InteractionData,
     ) {
 
-		if (interaction instanceof AutocompleteInteraction) {return}
-        await interaction.followUp('We are working on this command!')
+        if (interaction instanceof AutocompleteInteraction) {
+            const {ships} = this.google;
+            const focusedOption: AutocompleteFocusedOption = this.getFocusedOption(interaction)
+            let uniqueArray;
+            let filteredArray;
+            let limitedArray: string[] = [];
+            if (focusedOption.name === "manufacturer") {
+                uniqueArray = this.getUniqueManufacturers(ships);
+                filteredArray = this.filterByFocusedOption(uniqueArray, focusedOption);
+                limitedArray = this.limitResults(filteredArray, 25);
+            } else if (focusedOption.name === "model") {
+                uniqueArray = this.getUniqueModels(ships);
+                filteredArray = this.filterByFocusedOption(uniqueArray, focusedOption);
+                limitedArray = this.limitResults(filteredArray, 25);
+            }
+
+            return await this.respondWithManufacturers(interaction, limitedArray);
+        }
+        await interaction.followUp("Searching for the ship's información...")
+    }
+
+    getFocusedOption(interaction: AutocompleteInteraction): AutocompleteFocusedOption {
+        return interaction.options.getFocused(true);
+    }
+
+    getUniqueManufacturers(ships: any[]): string[] {
+        return [...new Set(ships.map(ship => ship.manufacturer))];
+    }
+
+    getUniqueModels(ships: any[]): string[] {
+        return [...new Set(ships.map(ship => ship.model))];
+    }
+
+    filterByFocusedOption(array: string[], focusedOption: AutocompleteFocusedOption): string[] {
+        return array.filter(item => item.toLowerCase().startsWith(focusedOption.value.toLowerCase()));
+    }
+
+    limitResults(array: string[], limit: number): string[] {
+        return array.slice(0, limit);
+    }
+
+    async respondWithManufacturers(interaction: AutocompleteInteraction, manufacturers: string[]) {
+        return interaction.respond(
+            manufacturers.map(manufacturer => ({
+                name: manufacturer,
+                value: manufacturer,
+            }))
+        );
     }
 }

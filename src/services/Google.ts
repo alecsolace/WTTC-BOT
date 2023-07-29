@@ -11,13 +11,19 @@ import fs from "fs";
 export class Google {
     private doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID as string);
 
-    constructor(private logger: Logger) {
-        this.logger.console(process.env.SPREADSHEET_ID as string, "info")
-        this.logger.console(process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL as string, "info")
-        this.logger.console(process.env.GOOGLE_PRIVATE_KEY as string, "info")
+    public ships: {
+        manufacturer: string;
+        model: string;
+        owner: string;
+        name?: string;
+    }[] = [];
 
+    constructor(private logger: Logger) {
         this.accessSpreadsheet().catch((e) => this.logger.file(e, "error"));
         this.logger.console("Service Google invoked !", "info");
+        this.updateFiles().finally(() => {
+            this.ships = JSON.parse(fs.readFileSync("./src/data/ships.json", "utf-8"));
+        })
     }
 
     async accessSpreadsheet() {
