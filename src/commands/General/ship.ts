@@ -61,7 +61,7 @@ export default class ShipCommand {
 
             return await this.respondWithManufacturers(interaction, limitedArray);
         }
-        await interaction.followUp("Searching for the ship's información...")
+        await interaction.followUp("We are working on implementing this command, thank you for your patience.")
     }
 
     getFocusedOption(interaction: AutocompleteInteraction): AutocompleteFocusedOption {
