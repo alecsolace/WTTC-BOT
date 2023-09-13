@@ -21,9 +21,6 @@ export class Google {
     constructor(private logger: Logger) {
         this.accessSpreadsheet().catch((e) => this.logger.file(e, "error"));
         this.logger.console("Service Google invoked !", "info");
-        this.updateFiles().finally(() => {
-            this.ships = JSON.parse(fs.readFileSync("./src/data/ships.json", "utf-8"));
-        })
     }
 
     async accessSpreadsheet() {
