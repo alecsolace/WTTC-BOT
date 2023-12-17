@@ -9,7 +9,7 @@ import {
 
 import {Discord, Slash, SlashOption} from '@decorators'
 import {Guard} from '@guards'
-import {Google, Logger} from "@services";
+import {Google, Logger, Wiki} from "@services";
 import {injectable} from "tsyringe";
 
 @Discord()
@@ -17,7 +17,7 @@ import {injectable} from "tsyringe";
 @Category('General')
 export default class BrandCommand {
 
-    constructor(private google: Google, private logger: Logger) {
+    constructor(private google: Google, private logger: Logger, private wiki: Wiki) {
     }
 
     @Slash({
@@ -102,6 +102,17 @@ export default class BrandCommand {
             console.log(e);
         }
         return shipString;
+    }
+
+    
+    async getManufacturerDescription(manufacturer: string): Promise<string> {
+        try {
+          let description = await this.wiki.getManufacturer(manufacturer);
+          return description;
+        } catch (error) {
+          this.logger.console(`Error fetching manufacturer's description for: ${manufacturer}`, "error");
+          throw new Error(`Error fetching manufacturer's description for: ${manufacturer}`); 
+        }
     }
 
 }
