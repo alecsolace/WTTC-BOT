@@ -11,6 +11,10 @@ COPY src ./src
 
 # Install dependencies from package-lock.json
 # and install dependencies for plugins (because postinstall script doesn't work in docker)
+# Install Python
+RUN apt-get update && apt-get install -y python
+
+# Install npm dependencies
 RUN npm ci
 
 COPY .swcrc .
