@@ -8,8 +8,6 @@ WORKDIR /tmp/app
 COPY package.json .
 COPY package-lock.json .
 COPY src ./src
-# Copy the members.json file into the Docker image
-COPY ./members.json ./members.json
 # Install dependencies from package-lock.json
 # and install dependencies for plugins (because postinstall script doesn't work in docker)
 RUN npm ci
