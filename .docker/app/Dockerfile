@@ -8,6 +8,7 @@ WORKDIR /tmp/app
 COPY package.json .
 COPY package-lock.json .
 COPY src ./src
+
 # Install dependencies from package-lock.json
 # and install dependencies for plugins (because postinstall script doesn't work in docker)
 RUN npm ci
@@ -34,7 +35,6 @@ COPY --from=build-runner /tmp/app/package-lock.json /app/package-lock.json
 
 # Move build files
 COPY --from=build-runner /tmp/app/build /app/build
-
 
 # Install dependencies from package-lock.json
 # and install dependencies for plugins (because plugins:install script doesn't work in docker)

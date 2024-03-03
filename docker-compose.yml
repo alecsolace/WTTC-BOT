@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     ports:
-      - "4000:4000"
+      - 4000:4000
     volumes:
       - ./database:/app/database
       - ./logs/:/app/logs
@@ -22,23 +22,26 @@ services:
     restart: always
     networks:
       - dev
+    # depends_on:
+    #   - database
 
   # ==== MySQL database ====
-  # ∫database:
-  #  image: mysql # or `mariadb`
-  #  container_name: database
-  #  restart: always
-  #  volumes:
-  #    - ./data:/var/lib/mysql:rw
-  #  environment:
-  #    - MYSQL_DATABASE=${DATABASE_NAME}
-  #    - MYSQL_USER=${DATABASE_USER}
-  #    - MYSQL_PASSWORD=${DATABASE_PASSWORD}
-  #    - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
-  #  ports:
-  #    - "3306:3306"
-  #  networks:
-  #    - dev
+
+  # database:
+  #   image: mysql # or `mariadb`
+  #   container_name: database
+  #   restart: always
+  #   volumes:
+  #     - ./data:/var/lib/mysql:rw
+  #   environment:
+  #     - MYSQL_DATABASE=${DATABASE_NAME}
+  #     - MYSQL_USER=${DATABASE_USER}
+  #     - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+  #     - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
+  #   ports:
+  #     - 3306:3306
+  #   networks:
+  #     - dev
 
   # ==== PostgreSQL database ====
 
