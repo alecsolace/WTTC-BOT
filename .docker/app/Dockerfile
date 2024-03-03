@@ -12,7 +12,7 @@ COPY src ./src
 # Install dependencies from package-lock.json
 # and install dependencies for plugins (because postinstall script doesn't work in docker)
 # Install Python
-RUN apt-get update && apt-get install -y python
+RUN nix-env -iA nixpkgs.python3
 
 # Install npm dependencies
 RUN npm ci
