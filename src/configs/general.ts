@@ -1,6 +1,6 @@
 export const generalConfig: GeneralConfigType = {
 
-    name: 'tscord', // the name of your bot
+    name: 'WTTC-Bot', // the name of your bot
     description: '', // the description of your bot
     defaultLocale: 'en', // default language of the bot, must be a valid locale
     ownerId: process.env['BOT_OWNER_ID'] || '',

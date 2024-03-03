@@ -2,25 +2,24 @@ import { Client } from "discordx";
 import { Category } from "@discordx/utilities";
 import {
   ApplicationCommandOptionType,
+  AutocompleteFocusedOption,
   AutocompleteInteraction,
   CommandInteraction,
   EmbedBuilder,
   EmbedField,
 } from "discord.js";
 
-import { Discord, Slash, SlashChoice, SlashOption } from "@decorators";
+import { Discord, Slash, SlashOption } from "@decorators";
 import { Guard } from "@guards";
 import { injectable } from "tsyringe";
-import { Google } from "@services";
-import members from "../../../members.json";
+import { Manufacturer, Member, Ship } from "@entities";
+import { Database } from "@services";
 
 @Discord()
 @injectable()
 @Category("General")
 export default class MemberFleetCommand {
-  private manufacturers: string[] = [];
-
-  constructor(private google: Google) {}
+  constructor(private db: Database) {}
 
   @Slash({
     name: "memberfleet",
@@ -32,27 +31,26 @@ export default class MemberFleetCommand {
       name: "member",
       type: ApplicationCommandOptionType.String,
       required: true,
-      autocomplete: (interaction) => {
-        const focusedOption = interaction.options.getFocused(true);
-        const choices = members;
-        const filtered = choices.filter((choice: string) =>
-          choice.startsWith(focusedOption.value)
-        );
-        const limitedResults = filtered.slice(0, 25); // Limit the results to the first 25 values to follow Discord.js guidelines
-
-        return interaction.respond(
-          limitedResults.map((choice: string) => ({
-            name: choice,
-            value: choice,
-          }))
-        );
-      },
+      autocomplete: true,
     })
     member: string,
-    interaction: CommandInteraction,
+    interaction: CommandInteraction | AutocompleteInteraction,
     client: Client,
     { localize }: InteractionData
   ) {
+    if (interaction instanceof AutocompleteInteraction) {
+      const focusedOption: AutocompleteFocusedOption =
+        interaction.options.getFocused(true);
+      const limitedResults = await this.db
+        .get(Member)
+        .findAutoComplete(focusedOption.value);
+      return interaction.respond(
+        limitedResults.map((choice: Member) => ({
+          name: choice.name,
+          value: choice.name,
+        }))
+      );
+    }
     await interaction.followUp("Searching for ships...");
     const memberShips = await this.findShips(member);
     if (memberShips.length === 0) {
@@ -60,14 +58,15 @@ export default class MemberFleetCommand {
       return;
     }
     const embeddedMessage = new EmbedBuilder()
-      .setTitle(memberShips[0].owner!)
+      .setTitle(member)
       .setColor("Aqua")
       .setAuthor({ name: "WTTC-Bot" })
       .setTimestamp()
       .setFooter({ text: "WTTC-Bot" })
-      .setDescription(`The ships owned by ${memberShips[0].owner!}`);
+      .setDescription(`The ships owned by ${member} (${memberShips.length})`);
 
-    this.manufacturers.forEach((manufacturer) => {
+    const manufacturers = await this.db.get(Manufacturer).findAll();
+    manufacturers.forEach((manufacturer: Manufacturer) => {
       let ships: string = "";
       memberShips.forEach((ship) => {
         if (ship.manufacturer === manufacturer) {
@@ -75,7 +74,7 @@ export default class MemberFleetCommand {
         }
       });
       let fields: EmbedField = {
-        name: manufacturer,
+        name: manufacturer.name,
         value: ships,
         inline: true,
       };
@@ -85,21 +84,10 @@ export default class MemberFleetCommand {
     await interaction.editReply({ embeds: [embeddedMessage] });
   }
 
-  async findShips(member: string) {
-    let ships = await this.google.getMemberShips();
-    let ownedShips = ships.filter((ship) => {
-      try {
-        return ship.owner?.toLowerCase() == member?.toLowerCase();
-      } catch (e) {
-        console.error(e);
-      }
-    });
-
-    ownedShips.forEach((ship) => {
-      if (!this.manufacturers.includes(ship.manufacturer)) {
-        this.manufacturers.push(ship.manufacturer);
-      }
-    });
-    return ownedShips;
+  async findShips(member: string): Promise<Ship[]> {
+    return await this.db
+      .get(Member)
+      .findByName(member)
+      .then((member) => member!.ships.loadItems());
   }
 }

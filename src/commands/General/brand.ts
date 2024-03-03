@@ -1,118 +1,110 @@
-import {Client} from 'discordx'
-import {Category} from '@discordx/utilities'
+import { Client } from "discordx";
+import { Category } from "@discordx/utilities";
 import {
-    ApplicationCommandOptionType,
-    AutocompleteFocusedOption,
-    AutocompleteInteraction,
-    CommandInteraction, EmbedBuilder, EmbedField
-} from 'discord.js'
+  ApplicationCommandOptionType,
+  AutocompleteFocusedOption,
+  AutocompleteInteraction,
+  CommandInteraction,
+  EmbedBuilder,
+  EmbedField,
+} from "discord.js";
 
-import {Discord, Slash, SlashOption} from '@decorators'
-import {Guard} from '@guards'
-import {Google, Logger, Wiki} from "@services";
-import {injectable} from "tsyringe";
+import { Discord, Slash, SlashOption } from "@decorators";
+import { Guard } from "@guards";
+import { Database, Google, Logger, Wiki } from "@services";
+import { injectable } from "tsyringe";
+import { Guild, Manufacturer, ManufacturerRepository } from "@entities";
 
 @Discord()
 @injectable()
-@Category('General')
+@Category("General")
 export default class BrandCommand {
+  constructor(
+    private logger: Logger,
+    private wiki: Wiki,
+    private db: Database
+  ) {}
 
-    constructor(private google: Google, private logger: Logger, private wiki: Wiki) {
-    }
-
-    @Slash({
-        name: 'brand',
-        description: 'Get all the ships by brand!'
+  @Slash({
+    name: "manufacturer",
+    description: "Get all the ships by manufacturer!",
+  })
+  @Guard()
+  async brand(
+    @SlashOption({
+      name: "manufacturer",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+      autocomplete: true,
     })
-    @Guard()
-    async brand(
-        @SlashOption({
-            name: "manufacturer",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-            autocomplete: true
-        }) brand: string,
-        interaction: CommandInteraction | AutocompleteInteraction,
-        client: Client,
-        {localize}: InteractionData
-    ) {
-        if (interaction instanceof AutocompleteInteraction) {
-            const ships = await this.google.getManufacturers();
-            const focusedOption: AutocompleteFocusedOption = interaction.options.getFocused(true);
-            const choices: string[] = Object.keys(ships);
-            const filtered: string[] = choices.filter((choice: string) =>
-                choice.toLowerCase().startsWith(focusedOption.value.toLowerCase())
-            );
-            const limitedResults: string[] = filtered.slice(0, 25); // Limit the results to the first 25 values to follow Discord.js guidelines
-            return interaction.respond(
-                limitedResults.map((choice: any) => ({
-                    name: choice,
-                    value: choice,
-                }))
-            );
-        }
-
-
-        await interaction.followUp("Searching for ships...");
-        this.logger.console(`Searching for ships for: ${brand}`, "info")
-        const ships: string = await this.findShips(brand);
-        if (ships.length == 0) {
-            await interaction.editReply(`Could not find ships for: ${brand}`);
-            return;
-        }
-        const embeddedMessage = new EmbedBuilder()
-            .setTitle(brand)
-            .setColor("Aqua")
-            .setAuthor({name: "WTTC-Bot"})
-            .setTimestamp()
-            .setFooter({text: "WTTC-Bot"})
-            .setDescription(
-                `The brand ${brand} has the following ships: `
-            );
-
-        let field: EmbedField = {
-            name: brand,
-            value: ships,
-            inline: true,
-        };
-        embeddedMessage.addFields([field]);
-
-        await interaction.editReply({embeds: [embeddedMessage]});
+    brand: string,
+    interaction: CommandInteraction | AutocompleteInteraction,
+    client: Client,
+    { localize }: InteractionData
+  ) {
+    if (interaction instanceof AutocompleteInteraction) {
+      const focusedOption: AutocompleteFocusedOption =
+        interaction.options.getFocused(true);
+      const limitedResults: Manufacturer[] = await this.db
+        .get(Manufacturer)
+        .findAutoComplete(focusedOption.value);
+      return interaction.respond(
+        limitedResults.map((choice: Manufacturer) => ({
+          name: choice.name,
+          value: choice.name,
+        }))
+      );
     }
 
-    async findShips(brand: string): Promise<string> {
-        let shipString = "";
-        try {
-            let ships = await this.google.getManufacturers();
-            let formattedShips: { manufacturer: string, model: string }[] = []
-            for (const manufacturer in ships) {
-                const models = ships[manufacturer];
-                for (const modelObj of models) {
-                    const {model} = modelObj;
-                    formattedShips.push({manufacturer, model});
-                }
-            }
-            let ownedShips: any[] = formattedShips.filter((ship: any) =>
-                ship.manufacturer === brand
-            );
-            ownedShips.forEach((ship) => {
-                shipString += `${ship.model} \n`;
-            });
-        } catch (e) {
-            console.log(e);
-        }
-        return shipString;
-    }
+    await interaction.followUp("Searching for ships...");
+    this.logger.console(`Searching for ships for: ${brand}`, "info");
 
-    
-    async getManufacturerDescription(manufacturer: string): Promise<string> {
-        try {
-          let description = await this.wiki.getManufacturer(manufacturer);
-          return description;
-        } catch (error) {
-          this.logger.console(`Error fetching manufacturer's description for: ${manufacturer}`, "error");
-          throw new Error(`Error fetching manufacturer's description for: ${manufacturer}`); 
-        }
+    const ships: string = await this.findShips(brand);
+    if (ships.length == 0) {
+      await interaction.editReply(`Could not find ships for: ${brand}`);
+      return;
     }
+    const brandDescription = await this.getManufacturerDescription(brand);
+    const embeddedMessage = new EmbedBuilder()
+      .setTitle(brand)
+      .setColor("Aqua")
+      .setAuthor({ name: "WTTC-Bot" })
+      .setTimestamp()
+      .setFooter({ text: "WTTC-Bot" })
+      .setDescription(
+        `${brandDescription} \nThe brand ${brand} has the following ships: `
+      );
 
+    let field: EmbedField = {
+      name: brand,
+      value: ships,
+      inline: true,
+    };
+    embeddedMessage.addFields([field]);
+
+    await interaction.editReply({ embeds: [embeddedMessage] });
+  }
+
+  async findShips(manufacturer: string): Promise<string> {
+    let shipString = "";
+    let ships = await this.db.get(Manufacturer).getShips(manufacturer);
+    ships.forEach((ship) => {
+      shipString += `${ship.model} \n`;
+    });
+    return shipString;
+  }
+
+  async getManufacturerDescription(manufacturer: string): Promise<string> {
+    try {
+      return await this.wiki.getManufacturer(manufacturer);
+    } catch (error) {
+      this.logger.console(
+        `Error fetching manufacturer's description for: ${manufacturer}`,
+        "error"
+      );
+      throw new Error(
+        `Error fetching manufacturer's description for: ${manufacturer}`
+      );
+    }
+  }
 }

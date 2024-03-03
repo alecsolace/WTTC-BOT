@@ -43,6 +43,7 @@ export class Logger {
         "BUTTON_INTERACTION": "Button",
         "SELECT_MENU_INTERACTION": "Select menu",
         "MODAL_SUBMIT_INTERACTION": "Modal submit",
+        "AUTO_COMPLETE_INTERACTION": "Auto complete",
     }
     private spinner = ora()
     private defaultConsole: typeof console

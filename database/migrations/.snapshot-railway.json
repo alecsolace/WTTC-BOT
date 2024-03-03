@@ -5,12 +5,12 @@
       "columns": {
         "key": {
           "name": "key",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "created_at": {
           "name": "created_at",
@@ -34,19 +34,19 @@
         },
         "value": {
           "name": "value",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "default": "''",
-          "mappedType": "text"
+          "mappedType": "string"
         }
       },
       "name": "data",
       "indexes": [
         {
-          "keyName": "primary",
+          "keyName": "PRIMARY",
           "columnNames": [
             "key"
           ],
@@ -62,12 +62,12 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "created_at": {
           "name": "created_at",
@@ -91,22 +91,22 @@
         },
         "prefix": {
           "name": "prefix",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "deleted": {
           "name": "deleted",
-          "type": "integer",
+          "type": "tinyint(1)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "default": "false",
-          "mappedType": "integer"
+          "mappedType": "boolean"
         },
         "last_interact": {
           "name": "last_interact",
@@ -122,7 +122,7 @@
       "name": "guild",
       "indexes": [
         {
-          "keyName": "primary",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -138,7 +138,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
@@ -167,35 +167,35 @@
         },
         "file_name": {
           "name": "file_name",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "base_path": {
           "name": "base_path",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "default": "''",
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "url": {
           "name": "url",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "size": {
           "name": "size",
-          "type": "integer",
+          "type": "int",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -213,27 +213,27 @@
         },
         "hash": {
           "name": "hash",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "delete_hash": {
           "name": "delete_hash",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         }
       },
       "name": "image",
       "indexes": [
         {
-          "keyName": "primary",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -249,25 +249,137 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "manufacturer",
+      "indexes": [
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "member",
+      "indexes": [
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
         },
         "edit_code": {
           "name": "edit_code",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "lifetime": {
           "name": "lifetime",
-          "type": "integer",
+          "type": "int",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -289,7 +401,7 @@
       "name": "pastebin",
       "indexes": [
         {
-          "keyName": "primary",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -305,7 +417,133 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "datetime"
+        },
+        "manufacturer_id": {
+          "name": "manufacturer_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "model": {
+          "name": "model",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        }
+      },
+      "name": "ship",
+      "indexes": [
+        {
+          "columnNames": [
+            "manufacturer_id"
+          ],
+          "composite": false,
+          "keyName": "ship_manufacturer_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "owner_id"
+          ],
+          "composite": false,
+          "keyName": "ship_owner_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "ship_manufacturer_id_foreign": {
+          "constraintName": "ship_manufacturer_id_foreign",
+          "columnNames": [
+            "manufacturer_id"
+          ],
+          "localTableName": "ship",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "manufacturer",
+          "updateRule": "cascade"
+        },
+        "ship_owner_id_foreign": {
+          "constraintName": "ship_owner_id_foreign",
+          "columnNames": [
+            "owner_id"
+          ],
+          "localTableName": "ship",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "member",
+          "updateRule": "cascade"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
           "unsigned": true,
           "autoincrement": true,
           "primary": true,
@@ -314,22 +552,22 @@
         },
         "type": {
           "name": "type",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "value": {
           "name": "value",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "default": "''",
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "additional_data": {
           "name": "additional_data",
@@ -354,7 +592,7 @@
       "name": "stat",
       "indexes": [
         {
-          "keyName": "primary",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],
@@ -370,12 +608,12 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "mappedType": "string"
         },
         "created_at": {
           "name": "created_at",
@@ -411,7 +649,7 @@
       "name": "user",
       "indexes": [
         {
-          "keyName": "primary",
+          "keyName": "PRIMARY",
           "columnNames": [
             "id"
           ],

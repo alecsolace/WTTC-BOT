@@ -1,13 +1,12 @@
 import axios from "axios"
 import chalk from "chalk"
-import { imageHash as callbackImageHash } from "image-hash"
-import { ImgurClient } from "imgur"
-import { singleton } from "tsyringe"
-import { promisify } from "util"
-
-import { Image, ImageRepository } from "@entities"
-import { Database, Logger } from "@services"
-import { base64Encode, fileOrDirectoryExists, getFiles } from "@utils/functions"
+import {imageHash as callbackImageHash} from "image-hash"
+import {singleton} from "tsyringe"
+import {promisify} from "util"
+import {Image, ImageRepository} from "@entities"
+import {Database, Logger} from "@services"
+import {base64Encode, fileOrDirectoryExists, getFiles} from "@utils/functions"
+import {ImgurClient} from "imgur";
 
 const imageHasher = promisify(callbackImageHash)
 
@@ -68,22 +67,22 @@ export class ImagesUpload {
         }
 
         // check if the image is already in the database and that its md5 hash is the same.
-        for (const imagePath of images) {            
+        for (const imagePath of images) {
             const imageHash = await imageHasher(
-                `${this.imageFolderPath}/${imagePath}`, 
-                16, 
+                `${this.imageFolderPath}/${imagePath}`,
+                16,
                 true
             ) as string
 
-            const imageInDb = await this.imageRepo.findOne({ 
+            const imageInDb = await this.imageRepo.findOne({
                 hash: imageHash,
             })
 
             if (!imageInDb) await this.addNewImageToImgur(imagePath, imageHash)
             else if (
                 imageInDb && (
-                imageInDb.basePath != imagePath.split('/').slice(0, -1).join('/') ||
-                imageInDb.fileName != imagePath.split('/').slice(-1)[0] )
+                    imageInDb.basePath != imagePath.split('/').slice(0, -1).join('/') ||
+                    imageInDb.fileName != imagePath.split('/').slice(-1)[0])
             ) console.warn(`Image ${chalk.bold.green(imagePath)} has the same hash as ${chalk.bold.green(imageInDb.basePath + (imageInDb.basePath?.length ? "/" : "") + imageInDb.fileName)} so it will skip`)
         }
     }
@@ -95,7 +94,7 @@ export class ImagesUpload {
         await this.imgurClient.deleteImage(image.deleteHash)
 
         this.logger.log(
-            `Image ${image.fileName} deleted from database because it is not in the filesystem anymore`, 
+            `Image ${image.fileName} deleted from database because it is not in the filesystem anymore`,
             'info',
             true
         )
@@ -107,11 +106,11 @@ export class ImagesUpload {
 
         // upload the image to imgur
         const base64 = base64Encode(`${this.imageFolderPath}/${imagePath}`)
-        
+
         try {
 
             const imageFileName = imagePath.split('/').slice(-1)[0],
-                  imageBasePath = imagePath.split('/').slice(0, -1).join('/')
+                imageBasePath = imagePath.split('/').slice(0, -1).join('/')
 
             const uploadResponse = await this.imgurClient.upload({
                 image: base64,
@@ -119,7 +118,7 @@ export class ImagesUpload {
                 name: imageFileName
             })
 
-            if (!uploadResponse.success ) {
+            if (!uploadResponse.success) {
                 this.logger.log(
                     `Error uploading image ${imageFileName} to imgur: ${uploadResponse.status} ${uploadResponse.data}`,
                     'error',
@@ -146,8 +145,7 @@ export class ImagesUpload {
                 true
             )
 
-        } 
-        catch (error: any) {
+        } catch (error: any) {
             this.logger.log(error?.toString(), 'error', true)
         }
     }
@@ -158,6 +156,6 @@ export class ImagesUpload {
 
         const res = await axios.get(imageUrl)
 
-        return !res.request?.path.includes('/removed')        
+        return !res.request?.path.includes('/removed')
     }
 }

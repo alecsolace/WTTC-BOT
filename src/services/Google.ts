@@ -1,118 +1,184 @@
-import {singleton} from "tsyringe";
-
-import {Logger} from "@services";
-import {GoogleSpreadsheet} from "google-spreadsheet";
-import * as process from "process";
-import {groupBy} from "../utils/functions/object";
-import {Schedule} from "@decorators";
+import { Schedule } from "@decorators";
+import { Manufacturer, Member, Ship } from "@entities";
+import { Database, Logger } from "@services";
 import fs from "fs";
+import { JWT } from "google-auth-library";
+import { GoogleSpreadsheet } from "google-spreadsheet";
+import * as process from "process";
+import { singleton } from "tsyringe";
+
+type ShipRow = {
+  Manufacturer: string;
+  Model: string;
+  Owner: string;
+  "Ship name"?: string;
+};
+type MemberRow = { MEMBER: string };
+type ManufacturerRow = { Manufacturer: string };
 
 @singleton()
 export class Google {
-    private doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID as string);
+  private serviceAccountJWT = new JWT({
+    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    key: process.env.GOOGLE_PRIVATE_KEY,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  });
+  private doc = new GoogleSpreadsheet(
+    process.env.SPREADSHEET_ID as string,
+    this.serviceAccountJWT
+  );
 
-    public ships: {
+  constructor(private logger: Logger, private db: Database) {
+    this.logger.console("Service Google invoked !", "info");
+  }
+
+  async accessSpreadsheet() {
+    await this.doc.loadInfo();
+  }
+
+  async migrateMembers() {
+    const members = await this.getMembers();
+    const memberRepository = this.db.get(Member);
+    this.logger.log("Migrating members", "info");
+    for (const memberName of members) {
+      await this.persistMember(memberName, memberRepository);
+    }
+  }
+
+  async persistMember(memberName: string, memberRepository: any) {
+    let member = await memberRepository.findOne({ name: memberName });
+    if (!member) {
+      member = new Member(memberName);
+      await memberRepository.persistAndFlush(member);
+      this.logger.log(`Member ${memberName} added`, "info");
+    }
+  }
+
+  async migrateManufacturers() {
+    const manufacturers = await this.getManufacturers();
+    const manufacturerRepository = this.db.get(Manufacturer);
+    this.logger.log("Migrating manufacturers", "info");
+    for (const manufacturerData of manufacturers) {
+      await this.persistManufacturer(manufacturerData, manufacturerRepository);
+    }
+  }
+
+  async persistManufacturer(
+    manufacturerData: string,
+    manufacturerRepository: any
+  ) {
+    let manufacturer = await manufacturerRepository.findOne({
+      name: manufacturerData,
+    });
+    if (!manufacturer) {
+      manufacturer = new Manufacturer(manufacturerData);
+      await manufacturerRepository.persistAndFlush(manufacturer);
+      this.logger.log(`Manufacturer ${manufacturerData} added`, "info");
+    }
+  }
+
+  async migrateShips() {
+    const ships = await this.getMemberShips();
+    this.logger.log("Migrating ships", "info");
+    for (const shipData of ships) {
+      await this.persistShip(shipData);
+    }
+  }
+
+  async persistShip(shipData: any) {
+    let ship: Ship | null = await this.db.get(Ship).findOne({
+      model: shipData.model,
+      owner: { name: shipData.owner },
+      name: shipData.name,
+    });
+    const manufacturer = await this.db
+      .get(Manufacturer)
+      .findByName(shipData.manufacturer);
+    const owner = await this.db.get(Member).findByName(shipData.owner);
+    if (!manufacturer) {
+      this.logger.log(
+        `Manufacturer ${shipData.manufacturer} not found`,
+        "info"
+      );
+      return;
+    }
+    if (!owner) {
+      this.logger.log(`Owner ${shipData.owner} not found`, "info");
+      return;
+    }
+    if (!ship) {
+      // Create new ship
+      ship = new Ship(manufacturer, owner, shipData.model, shipData.name);
+      await this.db.get(Ship).persistAndFlush(ship);
+      this.logger.log(`Ship ${shipData.model} added`, "info");
+    }
+  }
+
+  @Schedule("0 0 * * 1", "Migrate from Spreadsheet")
+  async migrate() {
+    await this.migrateMembers();
+    await this.migrateManufacturers();
+    await this.migrateShips();
+  }
+
+  private async getMemberShips() {
+    await this.accessSpreadsheet();
+    const sheet = this.doc.sheetsByIndex[0];
+    await sheet.loadHeaderRow(4);
+    const rows = await sheet.getRows<ShipRow>();
+
+    let ships: {
+      manufacturer: string;
+      model: string;
+      owner: string;
+      name?: string;
+    }[] = [];
+    rows.forEach((row) => {
+      let ship: {
         manufacturer: string;
         model: string;
         owner: string;
         name?: string;
-    }[] = [];
+      } = {
+        manufacturer: row.get("Manufacturer"),
+        model: row.get("Model"),
+        owner: row.get("Owner"),
+        name: row.get("Ship name"),
+      };
+      ships.push(ship);
+    });
+    return ships;
+  }
 
-    constructor(private logger: Logger) {
-        this.accessSpreadsheet().catch((e) => this.logger.file(e, "error"));
-        this.logger.console("Service Google invoked !", "info");
-    }
+  private async getMembers() {
+    await this.accessSpreadsheet();
+    const sheet = this.doc.sheetsByIndex[3];
+    await sheet.loadHeaderRow(3);
+    const rows = await sheet.getRows<MemberRow>();
 
-    async accessSpreadsheet() {
-        await this.doc.useServiceAccountAuth({
-            client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL! as string,
-            private_key: process.env.GOOGLE_PRIVATE_KEY! as string,
-        });
-        await this.doc.loadInfo();
-    }
+    let members: string[] = [];
+    rows.forEach((row) => {
+      if (row.get("MEMBER") !== "") {
+        let member = row.get("MEMBER") as string;
+        members.push(member);
+      }
+    });
+    return members;
+  }
 
-    async getMemberShips() {
-        await this.doc.loadInfo();
-        const sheet = this.doc.sheetsByIndex[0];
-        await sheet.loadHeaderRow(4);
-        const rows = await sheet.getRows();
+  private async getManufacturers(): Promise<string[]> {
+    await this.accessSpreadsheet();
+    const sheet = this.doc.sheetsByIndex[2];
+    await sheet.loadHeaderRow(3);
+    const rows = await sheet.getRows<ManufacturerRow>();
 
-        let ships: {
-            manufacturer: string;
-            model: string;
-            owner: string;
-            name?: string;
-        }[] = [];
-        rows.forEach((row) => {
-            let ship: {
-                manufacturer: string;
-                model: string;
-                owner: string;
-                name?: string;
-            } = {
-                manufacturer: row.Manufacturer,
-                model: row.Model,
-                owner: row.Owner,
-                name: row["Ship Name"],
-            };
-            ships.push(ship);
-        });
-        return ships;
-    }
-
-    async getMembers() {
-        await this.doc.loadInfo();
-        const sheet = this.doc.sheetsByIndex[3];
-        await sheet.loadHeaderRow(3);
-        const rows = await sheet.getRows();
-
-        let members: string[] = [];
-        rows.forEach((row) => {
-            if (row.MEMBER !== "") {
-                let member = row.MEMBER as string;
-                members.push(member);
-            }
-        });
-        return members;
-    }
-
-    async getManufacturers() {
-        await this.doc.loadInfo();
-        const sheet = this.doc.sheetsByIndex[2];
-        await sheet.loadHeaderRow(3);
-        const rows = await sheet.getRows();
-
-        let ships: { manufacturer: string; model: string }[] = [];
-        rows.forEach((row) => {
-            if (row.Name != null) {
-                let ship: { manufacturer: string; model: string } = {
-                    manufacturer: row.Manufacturer,
-                    model: row.Name,
-                };
-                ships.push(ship);
-            }
-        });
-        return groupBy(ships, "manufacturer");
-    }
-
-    @Schedule('0 0 * * *')
-    async updateFiles() {
-        this.getMembers().then(x => {
-            fs.writeFile(
-                'members.json', JSON.stringify(x), "utf-8", (error) => {
-                    if (error) this.logger.logError(error, "Exception")
-                    this.logger.console('Members file updated')
-                }
-            )
-        })
-
-        this.getMemberShips().then(x => {
-            fs.writeFile(
-                'ships.json', JSON.stringify(x), "utf-8", (error) => {
-                    if (error) this.logger.logError(error, "Exception")
-                    this.logger.console('Ships file updated')
-                }
-            )
-        })
-    }
+    let ships: string[] = [];
+    rows.forEach((row) => {
+      if (row.get("Manufacturer") != null) {
+        ships.push(row.get("Manufacturer") as string);
+      }
+    });
+    //return only unique values
+    return [...new Set(ships)];
+  }
 }
