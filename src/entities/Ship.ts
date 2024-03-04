@@ -8,6 +8,7 @@ import {
   Property,
   EntityRepositoryType,
   OneToOne,
+  Loaded,
 } from "@mikro-orm/core";
 import { Member } from "./Member";
 import { Manufacturer } from "./Manufacturer";
@@ -62,7 +63,15 @@ export class ShipRepository extends EntityRepository<Ship> {
     return this.findOne({ model });
   }
 
-  async findByOwner(owner: string): Promise<Ship[]> {
-    return this.find({ owner: { name: owner } });
+  async findByOwner(
+    ownerId: number
+  ): Promise<Loaded<Ship, "manufacturer" | "owner">[]> {
+    return await this.find(
+      { owner: { id: ownerId } },
+      {
+        populate: ["manufacturer", "owner"],
+        orderBy: { manufacturer: { name: "ASC" } },
+      }
+    );
   }
 }

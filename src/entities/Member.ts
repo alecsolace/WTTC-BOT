@@ -3,6 +3,8 @@ import {
   Entity,
   EntityRepository,
   EntityRepositoryType,
+  LoadStrategy,
+  Loaded,
   ManyToMany,
   OneToMany,
   OneToOne,
