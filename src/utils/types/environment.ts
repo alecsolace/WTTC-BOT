@@ -8,7 +8,7 @@ export const env = cleanEnv(process.env, {
 	NODE_ENV: str({ choices: ['development', 'production'] }),
 
 	BOT_TOKEN: str(),
-	TEST_GUILD_ID: str(),
+	GUILD_ID: str(),
 	BOT_OWNER_ID: str(),
 
 	DATABASE_HOST: str({ default: undefined }),
