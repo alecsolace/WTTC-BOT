@@ -1,14 +1,15 @@
 import {
-    Collection,
-    Entity,
-    EntityRepository,
-    EntityRepositoryType,
-    OneToMany,
-    PrimaryKey,
-    Property
-} from "@mikro-orm/core";
-import {Ship} from "./Ship";
-import {CustomBaseEntity} from "./BaseEntity";
+	Collection,
+	Entity,
+	EntityRepository,
+	EntityRepositoryType,
+	OneToMany,
+	PrimaryKey,
+	Property,
+} from '@mikro-orm/core'
+
+import { CustomBaseEntity } from './BaseEntity'
+import { Ship } from './Ship'
 
 // ===========================================
 // ================= Entity ==================
@@ -16,21 +17,22 @@ import {CustomBaseEntity} from "./BaseEntity";
 @Entity({ customRepository: () => ManufacturerRepository })
 export class Manufacturer extends CustomBaseEntity {
 
-    [EntityRepositoryType]?: ManufacturerRepository
+	[EntityRepositoryType]?: ManufacturerRepository
 
-    @PrimaryKey()
-    id: number;
+	@PrimaryKey()
+    id: number
 
-    @Property()
-    name: string;
+	@Property()
+    name: string
 
-    @OneToMany(() => Ship, (ship) => ship.manufacturer)
-    ships = new Collection<Ship>(this);
+	@OneToMany(() => Ship, ship => ship.manufacturer)
+    ships = new Collection<Ship>(this)
 
-    constructor(name: string) {
-        super();
-        this.name = name;
-    }
+	constructor(name: string) {
+		super()
+		this.name = name
+	}
+
 }
 
 // ===========================================
@@ -38,15 +40,17 @@ export class Manufacturer extends CustomBaseEntity {
 // ===========================================
 
 export class ManufacturerRepository extends EntityRepository<Manufacturer> {
-    async findByName(name: string): Promise<Manufacturer | null> {
-        return this.findOne({name})
-    }
 
-    async findAutoComplete(name: string): Promise<Manufacturer[]> {
-        return await this.find({name: {$like: name + '%'}}, {limit: 25})
-    }
+	async findByName(name: string): Promise<Manufacturer | null> {
+		return this.findOne({ name })
+	}
 
-    async getShips(manufacturer: string): Promise<Ship[]> {
-        return this.findOneOrFail({name: manufacturer}).then(manufacturer => manufacturer.ships.loadItems())
-    }
+	async findAutoComplete(name: string): Promise<Manufacturer[]> {
+		return await this.find({ name: { $like: `%${name}%` } }, { limit: 25, orderBy: { name: 'ASC' } })
+	}
+
+	async getShips(manufacturer: string): Promise<Ship[]> {
+		return this.findOneOrFail({ name: manufacturer }).then(manufacturer => manufacturer.ships.loadItems())
+	}
+
 }
