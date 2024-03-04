@@ -1,4 +1,3 @@
-import { Client, ParameterDecoratorEx } from "discordx";
 import { Category } from "@discordx/utilities";
 import {
   ApplicationCommandOptionType,
@@ -8,16 +7,15 @@ import {
   EmbedBuilder,
   EmbedField,
 } from "discord.js";
+import { Client } from "discordx";
 
-import { Discord, Slash, SlashOption } from "@/decorators";
+import { Discord, Injectable, Slash, SlashOption } from "@/decorators";
+import { Member, Ship } from "@/entities";
 import { Guard } from "@/guards";
-import { injectable } from "tsyringe";
-import { Manufacturer, Member, MemberShip, Ship } from "@/entities";
 import { Database } from "@/services";
-import { Collection, Loaded } from "@mikro-orm/core";
 
 @Discord()
-@injectable()
+@Injectable()
 @Category("General")
 export default class MemberFleetCommand {
   constructor(private db: Database) {}

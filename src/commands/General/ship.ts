@@ -1,24 +1,22 @@
-import {Client} from "discordx";
-import {Category} from "@discordx/utilities";
+import { Category } from "@discordx/utilities";
 import {
     ApplicationCommandOptionType,
     AutocompleteFocusedOption,
     AutocompleteInteraction,
     CommandInteraction,
-    Embed,
-    EmbedBuilder,
+    EmbedBuilder
 } from "discord.js";
+import { Client } from "discordx";
 
-import {Discord, Slash, SlashOption} from "@/decorators";
-import {Guard} from "@/guards";
-import {injectable} from "tsyringe";
-import {Database, Google, Logger, VehicleService} from "@/services";
-import {Vehicle} from "src/utils/types/vehicle";
-import {Ship} from "@/entities";
+import { Discord, Injectable, Slash, SlashOption } from "@/decorators";
+import { Ship } from "@/entities";
+import { Guard } from "@/guards";
+import { Database, VehicleService } from "@/services";
+import { Vehicle } from "src/utils/types/vehicle";
 
 @Discord()
 @Category("General")
-@injectable()
+@Injectable()
 export default class ShipCommand {
     constructor(private vehicleService: VehicleService, private db: Database) {
     }
