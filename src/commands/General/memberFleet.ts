@@ -9,11 +9,11 @@ import {
   EmbedField,
 } from "discord.js";
 
-import { Discord, Slash, SlashOption } from "@decorators";
-import { Guard } from "@guards";
+import { Discord, Slash, SlashOption } from "@/decorators";
+import { Guard } from "@/guards";
 import { injectable } from "tsyringe";
-import { Manufacturer, Member, MemberShip, Ship } from "@entities";
-import { Database } from "@services";
+import { Manufacturer, Member, MemberShip, Ship } from "@/entities";
+import { Database } from "@/services";
 import { Collection, Loaded } from "@mikro-orm/core";
 
 @Discord()

@@ -1,9 +1,9 @@
-import { singleton } from "tsyringe";
 
-import { Logger } from "@services";
+import { Service } from "@/decorators";
+import { Logger } from "@/services";
 import { Search, Vehicle } from "src/utils/types/vehicle";
 
-@singleton()
+@Service()
 export class VehicleService {
   constructor(private logger: Logger) {
     this.logger.console("Service Vehicle invoked !", "info");

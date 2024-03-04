@@ -1,4 +1,4 @@
-import { Member, Ship } from "@entities";
+import { Member, Ship } from "@/entities";
 import {
   Entity,
   EntityRepository,

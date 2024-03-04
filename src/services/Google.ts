@@ -1,11 +1,9 @@
-import { Schedule } from "@decorators";
-import { Manufacturer, Member, Ship, MemberShip } from "@entities";
-import { Database, Logger } from "@services";
-import fs from "fs";
+import { Schedule, Service } from "@/decorators";
+import { Manufacturer, Member, MemberShip, Ship } from "@/entities";
+import { Database, Logger } from "@/services";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import * as process from "process";
-import { singleton } from "tsyringe";
 
 type ShipRow = {
   Manufacturer: string;
@@ -16,7 +14,7 @@ type ShipRow = {
 type MemberRow = { MEMBER: string };
 type ManufacturerRow = { Manufacturer: string };
 
-@singleton()
+@Service()
 export class Google {
   private serviceAccountJWT = new JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,

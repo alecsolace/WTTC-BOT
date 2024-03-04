@@ -9,11 +9,11 @@ import {
   EmbedField,
 } from "discord.js";
 
-import { Discord, Slash, SlashOption } from "@decorators";
-import { Guard } from "@guards";
-import { Database, Google, Logger, Wiki } from "@services";
+import { Discord, Slash, SlashOption } from "@/decorators";
+import { Guard } from "@/guards";
+import { Database, Google, Logger, Wiki } from "@/services";
 import { injectable } from "tsyringe";
-import { Guild, Manufacturer, ManufacturerRepository } from "@entities";
+import { Guild, Manufacturer, ManufacturerRepository } from "@/entities";
 
 @Discord()
 @injectable()

@@ -9,12 +9,12 @@ import {
     EmbedBuilder,
 } from "discord.js";
 
-import {Discord, Slash, SlashOption} from "@decorators";
-import {Guard} from "@guards";
+import {Discord, Slash, SlashOption} from "@/decorators";
+import {Guard} from "@/guards";
 import {injectable} from "tsyringe";
-import {Database, Google, Logger, VehicleService} from "@services";
+import {Database, Google, Logger, VehicleService} from "@/services";
 import {Vehicle} from "src/utils/types/vehicle";
-import {Ship} from "@entities";
+import {Ship} from "@/entities";
 
 @Discord()
 @Category("General")

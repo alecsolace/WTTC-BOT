@@ -1,8 +1,8 @@
-import {Discord, Slash} from "@decorators";
+import {Discord, Slash} from "@/decorators";
 import {injectable} from "tsyringe";
 import {Category} from "@discordx/utilities";
-import {Database, Google} from "@services";
-import {Disabled, Guard, UserPermissions} from "@guards";
+import {Database, Google} from "@/services";
+import {Disabled, Guard, UserPermissions} from "@/guards";
 import {CommandInteraction} from "discord.js";
 import {Client} from "discordx";
 
