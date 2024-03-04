@@ -1,48 +1,80 @@
-## build runner
-FROM node:16.17-buster-slim as build-runner
+# This dockerfile has multiple stages in order
+# to optimize the build process time and reduce 
+# the final image size.
 
-# Set temp directory
-WORKDIR /tmp/app
+# ============================
+# ==== Dependencies stage ====
+# ============================
 
-# Move package.json and package-lock.json
-COPY package.json .
-COPY package-lock.json .
-COPY src ./src
+FROM node:20.11-alpine as dependencies
 
-# Install dependencies from package-lock.json
-# and install dependencies for plugins (because postinstall script doesn't work in docker)
-# Install Python
-RUN nix-env -iA nixpkgs.python3
+    WORKDIR /app
 
-# Install npm dependencies
-RUN npm ci
+    COPY package.json .
+    COPY package-lock.json .
 
-COPY .swcrc .
-COPY tsconfig.json .
+    # install deps
+    RUN apk add --no-cache --virtual .build-deps alpine-sdk python3 && \
+        npm ci --silent && \
+        apk del .build-deps
 
-# Build project
-RUN npm run build
+# ======================
+# ===== Build stage ====
+# ======================
 
-## producation runner
-FROM node:16.17-buster-slim as prod-runner
+FROM node:20.11-alpine as builder
 
-# set production mode
-ARG NODE_ENV=production
-ENV NODE_ENV $NODE_ENV
+    WORKDIR /app
 
-# Set work directory
-WORKDIR /app
+    # copy source files
+    COPY src ./src
+    COPY tsconfig.json .
 
-# Copy package.json and package-lock.json from build-runner
-COPY --from=build-runner /tmp/app/package.json /app/package.json
-COPY --from=build-runner /tmp/app/package-lock.json /app/package-lock.json
+    # copy build files from dependencies stage
+    COPY --from=dependencies /app/package.json .
+    COPY --from=dependencies /app/package-lock.json .
+    COPY --from=dependencies /app/node_modules /app/node_modules
 
-# Move build files
-COPY --from=build-runner /tmp/app/build /app/build
+    # install plugin dependencies
+    RUN npm run install:plugins
 
-# Install dependencies from package-lock.json
-# and install dependencies for plugins (because plugins:install script doesn't work in docker)
-RUN npm ci --omit=dev && npm cache clean --force 
+    # build the project
+    RUN npm run build
 
-# Finaly start the bot
-CMD ["node", "build/main.js"]
+# ========================
+# ===== Prepare stage ====
+# ========================
+
+FROM node:20.11-alpine as prepare
+
+    WORKDIR /app
+
+    # copy build files from builder stage
+    COPY --from=builder /app/build /app/build
+    COPY --from=builder /app/package.json /app/package.json
+    COPY --from=builder /app/package-lock.json /app/package-lock.json
+    COPY --from=builder /app/node_modules /app/node_modules
+
+    # purge dev dependencies
+    RUN npm prune --omit=dev
+
+# =====================
+# ===== Run stage =====
+# =====================
+
+FROM node:20.11-alpine as runner
+
+    WORKDIR /app
+
+    # set production mode
+    ARG NODE_ENV=production
+    ENV NODE_ENV $NODE_ENV
+
+    # copy build files from prepare stage
+    COPY --from=prepare /app/build /app/build
+    COPY --from=prepare /app/package.json /app/package.json
+    COPY --from=prepare /app/package-lock.json /app/package-lock.json
+    COPY --from=prepare /app/node_modules /app/node_modules
+
+    # finaly start the bot
+    CMD ["npm", "run", "start"]

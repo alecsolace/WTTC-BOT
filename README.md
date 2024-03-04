@@ -13,14 +13,14 @@
 <table>
   <tr>
     <td align="center">
-   
+
 # What is TSCord
 
 #### **TSCord** is a fully-featured **[discord bot](https://discord.com/developers/docs/intro#bots-and-apps)** *template* written in [Typescript](https://www.typescriptlang.org/), intended to provide a framework that's easy to use, extend and modify.
 
 It uses [`discordx`](https://github.com/discordx-ts/discordx) and [`discord.js v14`](https://github.com/discordjs/discord.js) under the hood to simplify the development of discord bots.
 
-This template was created to give developers a starting point for new Discord bots, so that much of the initial setup can be avoided and developers can instead focus on meaningful bot features. Developers can simply follow the [installation](https://tscord.discbot.app/docs/bot/get-started/installation) and the [configuration](https://tscord.discbot.app/docs/bot/get-started/configuration) instructions, and have a working bot with many boilerplate features already included!        
+This template was created to give developers a starting point for new Discord bots, so that much of the initial setup can be avoided and developers can instead focus on meaningful bot features. Developers can simply follow the [installation](https://tscord.discbot.app/docs/bot/get-started/installation) and the [configuration](https://tscord.discbot.app/docs/bot/get-started/configuration) instructions, and have a working bot with many boilerplate features already included!
     </td>
   </tr>
 </table>
@@ -28,9 +28,14 @@ This template was created to give developers a starting point for new Discord bo
 <table>
 <tr>
 <td align="center">
-ㅤ
 
-ㅤ **[To know how to use TSCord and all its components, check the documentation here](https://tscord.discbot.app/)** ㅤ
+Getting started is as easy as one command
+
+```bash
+npx tscord init bot my-bot
+```
+
+**[To know how to use TSCord and all its components, check the documentation here](https://tscord.discbot.app/)** ㅤ
 
 </td>
 </tr>
@@ -44,7 +49,7 @@ This template was created to give developers a starting point for new Discord bo
 
 ### [Dashboard](https://github.com/barthofu/tscord-dashboard)
 
-**A ready-to-use fancy dashboard for your TSCord bot!**
+A ready-to-use fancy dashboard for your TSCord bot
 
 <img src="https://user-images.githubusercontent.com/66025667/191989444-5fa096ec-c74e-423d-9735-615b94bc100f.png"></img>
 
@@ -53,7 +58,7 @@ This template was created to give developers a starting point for new Discord bo
 
 ### [Website](https://github.com/barthofu/tscord-website)
 
-**Static front homepage for your TSCord-based bot!**
+Customizable static homepage for your TSCord-based bot
 
 https://user-images.githubusercontent.com/66025667/184621486-7340157f-b7fc-44ea-94a9-03d76a99384c.mp4
 
@@ -65,7 +70,7 @@ https://user-images.githubusercontent.com/66025667/184621486-7340157f-b7fc-44ea-
 
 ### [CLI](https://github.com/barthofu/tscord-cli)
 
-**A really useful CLI meant to initialize a new TSCord project, generate files by type or even manage plugins!**
+Really useful CLI meant to initialize a new TSCord project, generate files by type or even manage plugins
 
 https://user-images.githubusercontent.com/66025667/196367258-94c77e23-779c-4d9b-8583-a29226435b07.mp4
 
@@ -74,7 +79,7 @@ https://user-images.githubusercontent.com/66025667/196367258-94c77e23-779c-4d9b-
 
 ### [Plugins](https://github.com/barthofu/tscord-plugins)
 
-**TSCord template is fully extensible thanks to the plugin eco-system!**
+Fully extensible thanks to the plugin eco-system
 
 <img width="50%" src="https://user-images.githubusercontent.com/66025667/196372599-022c6254-01a6-4f7c-bd52-06246527a8b9.png"></img>
 
@@ -86,11 +91,10 @@ https://user-images.githubusercontent.com/66025667/196367258-94c77e23-779c-4d9b-
 <br>
 
 <div align="center">
-    <a href="https://discord.gg/8P7jFpbKkb" target="_blank">
+    <a href="https://discord.gg/GsYF4xceZZ" target="_blank">
         <img width="17.5%" src="https://user-images.githubusercontent.com/66025667/196373934-2fad8760-a58d-4b4d-ad64-b069baa71823.png"></img>
     </a>
 </div>
-
 
 ## 📜 Features
 
@@ -118,12 +122,14 @@ Talking about features, here are some of the core features of the template:
 - **Scheduler** for cron jobs
 - Built-in rich **statistics** system
 - Automatic **static assets upload** to [imgur](https://imgur.com/)
-- **WebSocket** server with decorators driven events system
 
 This template is also developer friendly and follow strict design patterns to ease its maintenance:
 - Written in **Typescript**
 - Built around the **Dependency Injection** and **Singleton** patterns
+- **HMR** on events and commands for a faster development
 - Use of battle-tested **libraries** under the hood (*discordx* and *discord.js*)
+- **Linting** and **formatting** thanks to a top-notch ESLint config
+- Typesafe and validated **environment variables**
 - Built-in **debugging** setup for VSCode
 - Support for running with the **[PM2](https://pm2.keymetrics.io/)** process manger
 - Support for running with **[Docker](https://www.docker.com/)**
@@ -142,12 +148,11 @@ You can also find useful documentations at:
 
 ## 📢 Support
 
-If you need support on the template or just want to exchange with us, don't hesitate to join the **[official Discord support server](https://discord.gg/8P7jFpbKkb)**!
+If you need support on the template or just want to exchange with us, don't hesitate to join the **[official Discord support server](https://discord.gg/GsYF4xceZZ)**!
 
-After joining it, select the **TSCord** role to access the category within the server.
+## Roadmap
 
-## 🌐 Roadmap
-
+We use Github milestones for
 #### [Click here](https://github.com/barthofu/tscord-template/milestones?direction=asc&sort=title&state=open) to access the milestone roadmap
 
 ## 📑 License

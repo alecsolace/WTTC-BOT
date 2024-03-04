@@ -1,31 +1,35 @@
-import { apiConfig, websocketConfig } from "@configs"
-import { Store as RxStore } from "rxeta"
-import { singleton } from "tsyringe"
+import { Store as RxStore } from 'rxeta'
 
-interface State {
+import { apiConfig } from '@/configs'
+import { Service } from '@/decorators'
 
-    authorizedAPITokens: string[]
-    ready: {
-        bot: boolean | null
-        api: boolean | null
-        websocket: boolean | null
-    }
+type State = {
+
+	authorizedAPITokens: string[]
+	botHasBeenReloaded: boolean
+	ready: {
+		bot: boolean | null
+		api: boolean | null
+	}
 }
 
 const initialState: State = {
-    
-    authorizedAPITokens: [],
-    ready: {
-        bot: false,
-        api: apiConfig.enabled ? false : null,
-        websocket: websocketConfig.enabled ? false : null,
-    }
+
+	authorizedAPITokens: [],
+	botHasBeenReloaded: false,
+	ready: {
+		bot: false,
+		api: apiConfig.enabled ? false : null,
+	},
 }
 
-@singleton()
+@Service({
+	keepInstanceAfterHmr: true,
+})
 export class Store extends RxStore<State> {
 
-    constructor() {
-        super(initialState)
-    }
+	constructor() {
+		super(initialState)
+	}
+
 }
