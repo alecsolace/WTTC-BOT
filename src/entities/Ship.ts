@@ -2,17 +2,17 @@ import {
   Collection,
   Entity,
   EntityRepository,
-  ManyToMany,
+  EntityRepositoryType,
+  Loaded,
   ManyToOne,
+  OneToMany,
   PrimaryKey,
   Property,
-  EntityRepositoryType,
-  OneToOne,
-  Loaded,
 } from "@mikro-orm/core";
-import { Member } from "./Member";
-import { Manufacturer } from "./Manufacturer";
 import { CustomBaseEntity } from "./BaseEntity";
+import { Manufacturer } from "./Manufacturer";
+import { Member } from "./Member";
+import { MemberShip } from "./MemberShip";
 
 // ===========================================
 // ================= Entity ==================
@@ -30,23 +30,13 @@ export class Ship extends CustomBaseEntity {
   @Property()
   model: string;
 
-  @ManyToOne()
-  owner: Member;
+  @OneToMany(() => MemberShip, (memberShip) => memberShip.ship)
+  memberShips = new Collection<MemberShip>(this);
 
-  @Property({ nullable: true })
-  name?: string;
-
-  constructor(
-    manufacturer: Manufacturer,
-    owner: Member,
-    model: string,
-    name?: string
-  ) {
+  constructor(manufacturer: Manufacturer, model: string) {
     super();
     this.manufacturer = manufacturer;
     this.model = model;
-    this.name = name;
-    this.owner = owner;
   }
 }
 
@@ -55,22 +45,17 @@ export class Ship extends CustomBaseEntity {
 // ===========================================
 
 export class ShipRepository extends EntityRepository<Ship> {
-  async findByName(name: string): Promise<Ship | null> {
-    return this.findOne({ name });
-  }
-
   async findByModel(model: string): Promise<Ship | null> {
     return this.findOne({ model });
   }
 
-  async findByOwner(
-    ownerId: number
-  ): Promise<Loaded<Ship, "manufacturer" | "owner">[]> {
-    return await this.find(
-      { owner: { id: ownerId } },
+  async findByMember(ownerId: number) {
+    return this.find(
+      { memberShips: { member: { id: ownerId } } },
       {
-        populate: ["manufacturer", "owner"],
-        orderBy: { manufacturer: { name: "ASC" } },
+        populate: ["manufacturer", "memberShips", "memberShips.member"],
+        orderBy: { model: "DESC" },
+        populateWhere: { memberShips: { member: { id: ownerId } } },
       }
     );
   }

@@ -12,7 +12,7 @@ import {
 import { Discord, Slash, SlashOption } from "@decorators";
 import { Guard } from "@guards";
 import { injectable } from "tsyringe";
-import { Manufacturer, Member, Ship } from "@entities";
+import { Manufacturer, Member, MemberShip, Ship } from "@entities";
 import { Database } from "@services";
 import { Collection, Loaded } from "@mikro-orm/core";
 
@@ -65,13 +65,13 @@ export default class MemberFleetCommand {
       return;
     }
     const embeddedMessage = new EmbedBuilder()
-      .setTitle(memberShips[0].owner.name)
+      .setTitle(memberShips[0].memberShips[0].member.name)
       .setColor("Aqua")
       .setAuthor({ name: "WTTC-Bot" })
       .setTimestamp()
       .setFooter({ text: "WTTC-Bot" })
       .setDescription(
-        `The ships owned by ${memberShips[0].owner.name} (${memberShips.length})`
+        `The ships owned by ${memberShips[0].memberShips[0].member.name} (${memberShips.length})`
       );
 
     // Group memberShips by manufacturer
@@ -106,9 +106,9 @@ export default class MemberFleetCommand {
     await interaction.editReply({ embeds: [embeddedMessage] });
   }
 
-  async findShips(
-    memberId: number
-  ): Promise<Loaded<Ship, "manufacturer" | "owner">[]> {
-    return await this.db.get(Ship).findByOwner(memberId);
+  async findShips(memberId: number) {
+    const res = await this.db.get(Ship).findByMember(memberId);
+    console.log(res);
+    return res;
   }
 }

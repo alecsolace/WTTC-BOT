@@ -461,24 +461,6 @@
           "primary": false,
           "nullable": false,
           "mappedType": "string"
-        },
-        "owner_id": {
-          "name": "owner_id",
-          "type": "int",
-          "unsigned": true,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "string"
         }
       },
       "name": "ship",
@@ -489,15 +471,6 @@
           ],
           "composite": false,
           "keyName": "ship_manufacturer_id_index",
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "owner_id"
-          ],
-          "composite": false,
-          "keyName": "ship_owner_id_index",
           "primary": false,
           "unique": false
         },
@@ -524,17 +497,102 @@
           ],
           "referencedTableName": "manufacturer",
           "updateRule": "cascade"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
         },
-        "ship_owner_id_foreign": {
-          "constraintName": "ship_owner_id_foreign",
+        "member_id": {
+          "name": "member_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "ship_id": {
+          "name": "ship_id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "member_ship",
+      "indexes": [
+        {
           "columnNames": [
-            "owner_id"
+            "member_id"
           ],
-          "localTableName": "ship",
+          "composite": false,
+          "keyName": "member_ship_member_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "ship_id"
+          ],
+          "composite": false,
+          "keyName": "member_ship_ship_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "member_ship_member_id_foreign": {
+          "constraintName": "member_ship_member_id_foreign",
+          "columnNames": [
+            "member_id"
+          ],
+          "localTableName": "member_ship",
           "referencedColumnNames": [
             "id"
           ],
           "referencedTableName": "member",
+          "updateRule": "cascade"
+        },
+        "member_ship_ship_id_foreign": {
+          "constraintName": "member_ship_ship_id_foreign",
+          "columnNames": [
+            "ship_id"
+          ],
+          "localTableName": "member_ship",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "ship",
           "updateRule": "cascade"
         }
       }

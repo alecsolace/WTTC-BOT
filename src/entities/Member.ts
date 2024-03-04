@@ -3,15 +3,12 @@ import {
   Entity,
   EntityRepository,
   EntityRepositoryType,
-  LoadStrategy,
-  Loaded,
-  ManyToMany,
   OneToMany,
-  OneToOne,
   PrimaryKey,
   Property,
 } from "@mikro-orm/core";
 import { CustomBaseEntity } from "./BaseEntity";
+import { MemberShip } from "./MemberShip";
 import { Ship } from "./Ship";
 
 // ===========================================
@@ -27,8 +24,8 @@ export class Member extends CustomBaseEntity {
   @Property()
   name: string;
 
-  @OneToMany({ entity: () => Ship, mappedBy: "owner" })
-  ships = new Collection<Ship>(this);
+  @OneToMany(() => MemberShip, (memberShip) => memberShip.member)
+  memberShips = new Collection<MemberShip>(this);
 
   constructor(name: string) {
     super();
@@ -49,9 +46,9 @@ export class MemberRepository extends EntityRepository<Member> {
     return this.find({ name: { $like: name + "%" } }, { limit: 25 });
   }
 
-  async getShips(manufacturer: string): Promise<Ship[]> {
+  async getShips(manufacturer: string) {
     return this.findOneOrFail({ name: manufacturer }).then((manufacturer) =>
-      manufacturer.ships.loadItems()
+      manufacturer.memberShips.loadItems()
     );
   }
 }

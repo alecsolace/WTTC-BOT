@@ -1,5 +1,5 @@
 import { Schedule } from "@decorators";
-import { Manufacturer, Member, Ship } from "@entities";
+import { Manufacturer, Member, Ship, MemberShip } from "@entities";
 import { Database, Logger } from "@services";
 import fs from "fs";
 import { JWT } from "google-auth-library";
@@ -83,18 +83,18 @@ export class Google {
     for (const shipData of ships) {
       await this.persistShip(shipData);
     }
+    for (const shipData of ships) {
+      await this.persistMemberShip(shipData);
+    }
   }
 
   async persistShip(shipData: any) {
     let ship: Ship | null = await this.db.get(Ship).findOne({
       model: shipData.model,
-      owner: { name: shipData.owner },
-      name: shipData.name,
     });
     const manufacturer = await this.db
       .get(Manufacturer)
       .findByName(shipData.manufacturer);
-    const owner = await this.db.get(Member).findByName(shipData.owner);
     if (!manufacturer) {
       this.logger.log(
         `Manufacturer ${shipData.manufacturer} not found`,
@@ -102,15 +102,39 @@ export class Google {
       );
       return;
     }
+    if (!ship) {
+      // Create new ship
+      ship = new Ship(manufacturer, shipData.model);
+      await this.db.get(Ship).persistAndFlush(ship);
+      this.logger.log(`Ship ${shipData.model} added`, "info");
+    }
+  }
+
+  async persistMemberShip(shipData: any) {
+    const ship = await this.db.get(Ship).findOne({ model: shipData.model });
+    const owner = await this.db.get(Member).findByName(shipData.owner);
+    if (!ship) {
+      this.logger.log(`Ship ${shipData.model} not found`, "info");
+      return;
+    }
     if (!owner) {
       this.logger.log(`Owner ${shipData.owner} not found`, "info");
       return;
     }
-    if (!ship) {
-      // Create new ship
-      ship = new Ship(manufacturer, owner, shipData.model, shipData.name);
-      await this.db.get(Ship).persistAndFlush(ship);
-      this.logger.log(`Ship ${shipData.model} added`, "info");
+
+    // Check if the member already owns this ship
+    let memberShip = await this.db
+      .get(MemberShip)
+      .findOne({ member: owner, ship: ship, name: shipData.name });
+
+    if (!memberShip) {
+      // If the member does not own this ship, create a new MemberShip
+      memberShip = new MemberShip(owner, ship, shipData.name);
+      await this.db.get(MemberShip).persistAndFlush(memberShip);
+      this.logger.log(
+        `Ship ${shipData.model} added to member ${shipData.owner}`,
+        "info"
+      );
     }
   }
 
