@@ -65,7 +65,7 @@ export class ShipRepository extends EntityRepository<Ship> {
 	}
 
 	async findAutoCompleteWManufacturer(model: string, manufacturer: string) {
-		return await this.find({ model: { $like: `%${model}%` }, manufacturer: { name: manufacturer } }, { limit: 25, orderBy: { model: 'ASC' } })
+		return await this.find({ model: { $like: `%${model}%` }, manufacturer: { name: manufacturer } }, { limit: 25, orderBy: { model: 'ASC' }, cache: 5000 })
 	}
 
 }

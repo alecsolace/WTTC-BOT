@@ -1,40 +1,53 @@
-import { Member, Ship } from "@/entities";
 import {
-  Entity,
-  EntityRepository,
-  EntityRepositoryType,
-  ManyToOne,
-  PrimaryKey,
-  Property,
-} from "@mikro-orm/core";
+	Entity,
+	EntityRepository,
+	EntityRepositoryType,
+	ManyToOne,
+	PrimaryKey,
+	Property,
+} from '@mikro-orm/core'
+
+import { Member, Ship } from '@/entities'
+
+// ===========================================
+// ================= Entity ==================
+// ===========================================
 
 @Entity({ customRepository: () => MemberShipRepository })
 export class MemberShip {
-  [EntityRepositoryType]?: MemberShipRepository;
-  @PrimaryKey()
-  id!: number;
 
-  @ManyToOne(() => Member)
-  member!: Member;
+	[EntityRepositoryType]?: MemberShipRepository
+	@PrimaryKey()
+  id!: number
 
-  @ManyToOne(() => Ship)
-  ship!: Ship;
+	@ManyToOne(() => Member)
+  member!: Member
 
-  @Property()
-  name?: string;
+	@ManyToOne(() => Ship)
+  ship!: Ship
 
-  constructor(member: Member, ship: Ship, name?: string) {
-    this.member = member;
-    this.ship = ship;
-    this.name = name;
-  }
+	@Property()
+  name?: string
+
+	constructor(member: Member, ship: Ship, name?: string) {
+		this.member = member
+		this.ship = ship
+		this.name = name
+	}
+
 }
 
+// ===========================================
+// =========== Custom Repository =============
+// ===========================================
+
 export class MemberShipRepository extends EntityRepository<MemberShip> {
-  async findByMember(memberId: number) {
-    return this.find(
-      { member: { id: memberId } },
-      { populate: ["ship", "member"] }
-    );
-  }
+
+	async findByMember(memberId: number) {
+		return this.find(
+			{ member: { id: memberId } },
+			{ populate: ['ship', 'member'] }
+		)
+	}
+
 }

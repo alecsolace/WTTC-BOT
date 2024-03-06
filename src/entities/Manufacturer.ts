@@ -46,7 +46,7 @@ export class ManufacturerRepository extends EntityRepository<Manufacturer> {
 	}
 
 	async findAutoComplete(name: string): Promise<Manufacturer[]> {
-		return await this.find({ name: { $like: `%${name}%` } }, { limit: 25, orderBy: { name: 'ASC' } })
+		return await this.find({ name: { $like: `%${name}%` } }, { limit: 25, orderBy: { name: 'ASC' }, cache: 5000 })
 	}
 
 	async getShips(manufacturer: string): Promise<Ship[]> {
