@@ -5,7 +5,7 @@ import { generalConfig } from '@/configs'
 import { Discord, Guard, Injectable, On } from '@/decorators'
 import { Guild, User } from '@/entities'
 import { Maintenance } from '@/guards'
-import { Database, Logger, Stats } from '@/services'
+import { Database, ErrorHandler, Logger, Stats } from '@/services'
 import { syncUser } from '@/utils/functions'
 
 @Discord()
@@ -15,7 +15,8 @@ export default class InteractionCreateEvent {
 	constructor(
 		private stats: Stats,
 		private logger: Logger,
-		private db: Database
+		private db: Database,
+		private errorHandler: ErrorHandler
 	) {}
 
 	@On('interactionCreate')
@@ -43,7 +44,12 @@ export default class InteractionCreateEvent {
 		await this.stats.registerInteraction(interaction as AllInteractions)
 		this.logger.logInteraction(interaction as AllInteractions)
 
-		client.executeInteraction(interaction)
+		try {
+			// execute the interaction
+			await client.executeInteraction(interaction)
+		} catch (error: unknown) {
+			await this.errorHandler.handleError(interaction as CommandInteraction, error)
+		}
 	}
 
 }
