@@ -68,6 +68,7 @@ export default class ShipCommand {
 				const embed = this.createVehicleEmbed(vehicle)
 				await interaction.followUp({ embeds: [embed] })
 			} catch (error) {
+				console.error((error as Error).message, 'error')
 				throw new UnknownReplyError(interaction, (error as Error).message)
 			}
 		}
@@ -92,36 +93,37 @@ export default class ShipCommand {
 	}
 
 	createVehicleEmbed(vehicle: Vehicle): EmbedBuilder {
+		console.log(vehicle)
 		const embed = new EmbedBuilder()
-			.setTitle(vehicle.name ?? '')
-			.setDescription(vehicle.description ?? '')
-			.addFields([
-				{ name: 'Manufacturer', value: vehicle.manufacturer ?? '', inline: true },
-				{ name: 'Role', value: vehicle.role ?? '', inline: true },
-				{ name: 'Crew', value: vehicle.crew ?? '', inline: true },
-				{ name: 'Cargo', value: vehicle.cargo?.toString() ?? '', inline: true },
-				{ name: 'Length', value: vehicle.length?.toString() ?? '', inline: true },
-				{ name: 'Height', value: vehicle.height?.toString() ?? '', inline: true },
-				{ name: 'Beam', value: vehicle.beam?.toString() ?? '', inline: true },
-				{ name: 'Mass', value: vehicle.mass?.toString() ?? '', inline: true },
-				{ name: 'Combat Speed', value: vehicle.combatSpeed?.toString() ?? '', inline: true },
-				{ name: 'After Burner', value: vehicle.afterBurner?.toString() ?? '', inline: true },
-				{ name: 'Max Speed', value: vehicle.maxSpeed?.toString() ?? '', inline: true },
-				{ name: 'Pitch', value: vehicle.pitch?.toString() ?? '', inline: true },
-				{ name: 'Yaw', value: vehicle.yaw?.toString() ?? '', inline: true },
-				{ name: 'Roll', value: vehicle.roll?.toString() ?? '', inline: true },
-				{ name: 'Acceleration', value: this.getAccelerationValue(vehicle.acceleration), inline: true },
-				{ name: 'Ingame Price', value: vehicle.ingamePrice?.toString() ?? '', inline: true },
-				{ name: 'Pledge Price', value: vehicle.pledgePrice?.toString() ?? '', inline: true },
-				{ name: 'Status', value: vehicle.status ?? '', inline: true },
-			])
+			.setTitle(vehicle.name ?? ' - ')
+			.setDescription(vehicle.description ?? ' - ')
+		embed.addFields([
+			{ name: 'Manufacturer', value: vehicle.manufacturer ?? ' - ', inline: true },
+			{ name: 'Role', value: vehicle.role ?? ' - ', inline: true },
+			{ name: 'Crew', value: vehicle.crew ?? ' - ', inline: true },
+			{ name: 'Cargo', value: vehicle.cargo?.toString() ?? ' - ', inline: true },
+			{ name: 'Length', value: vehicle.length?.toString() ?? ' - ', inline: true },
+			{ name: 'Height', value: vehicle.height?.toString() ?? ' - ', inline: true },
+			{ name: 'Beam', value: vehicle.beam?.toString() ?? ' - ', inline: true },
+			{ name: 'Mass', value: vehicle.mass?.toString() ?? ' - ', inline: true },
+			{ name: 'Combat Speed', value: vehicle.combatSpeed?.toString() ?? ' - ', inline: true },
+			{ name: 'After Burner', value: vehicle.afterBurner?.toString() ?? ' - ', inline: true },
+			{ name: 'Max Speed', value: vehicle.maxSpeed?.toString() ?? ' - ', inline: true },
+			{ name: 'Pitch', value: vehicle.pitch?.toString() ?? ' - ', inline: true },
+			{ name: 'Yaw', value: vehicle.yaw?.toString() ?? ' - ', inline: true },
+			{ name: 'Roll', value: vehicle.roll?.toString() ?? ' - ', inline: true },
+			{ name: 'Acceleration', value: this.getAccelerationValue(vehicle.acceleration), inline: true },
+			{ name: 'Ingame Price', value: vehicle.ingamePrice?.toString() ?? ' - ', inline: true },
+			{ name: 'Pledge Price', value: vehicle.pledgePrice?.toString() ?? ' - ', inline: true },
+			{ name: 'Status', value: vehicle.status ?? ' - ', inline: true },
+		])
 		if (vehicle.imageUrl) embed.setThumbnail(vehicle.imageUrl)
 
 		return embed
 	}
 
-	getAccelerationValue(acceleration: Vehicle['acceleration']): string {
-		return `Main: ${acceleration.main ?? ''}, Retro: ${acceleration.retro ?? ''}, VTOL: ${acceleration.vtol ?? ''}`
+	getAccelerationValue(acceleration?: Vehicle['acceleration']): string {
+		return `Main: ${acceleration?.main ?? ' - '}, Retro: ${acceleration?.retro ?? ' - '}, VTOL: ${acceleration?.vtol ?? ' - '}`
 	}
 
 }
