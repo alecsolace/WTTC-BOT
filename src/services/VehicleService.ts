@@ -65,12 +65,15 @@ export class VehicleService {
 	}
 
 	async getVehicleData(vehicleName: string): Promise<Vehicle> {
-		const toolsData = await this.fetchToolsData(vehicleName)
-		console.log('toolsData', toolsData)
-		const vehicleData = await this.fetchVehicleData(vehicleName)
-		console.log('vehicleData', vehicleData)
+		try {
+			const toolsData = await this.fetchToolsData(vehicleName)
+			const vehicleData = await this.fetchVehicleData(vehicleName)
 
-		return this.transformToVehicle(toolsData, vehicleData)
+			return this.transformToVehicle(toolsData, vehicleData)
+		} catch (error) {
+			this.logger.console((error as Error).message, 'error')
+			throw new Error('Vehicle not found')
+		}
 	}
 
 }

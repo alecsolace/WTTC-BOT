@@ -11,6 +11,7 @@ import { Vehicle } from 'src/utils/types/vehicle'
 
 import { Discord, Injectable, Slash, SlashOption } from '@/decorators'
 import { Manufacturer, Ship } from '@/entities'
+import { UnknownReplyError } from '@/errors'
 import { Guard } from '@/guards'
 import { Database, VehicleService } from '@/services'
 
@@ -62,9 +63,13 @@ export default class ShipCommand {
 			return await this.respondWithManufacturers(interaction, limitedArray)
 		} else {
 			const vehicleName = model.replace(/ /g, '_')
-			const vehicle = await this.vehicleService.getVehicleData(vehicleName)
-			const embed = this.createVehicleEmbed(vehicle)
-			await interaction.followUp({ embeds: [embed] })
+			try {
+				const vehicle = await this.vehicleService.getVehicleData(vehicleName)
+				const embed = this.createVehicleEmbed(vehicle)
+				await interaction.followUp({ embeds: [embed] })
+			} catch (error) {
+				throw new UnknownReplyError(interaction, (error as Error).message)
+			}
 		}
 	}
 
