@@ -93,7 +93,6 @@ export default class ShipCommand {
 	}
 
 	createVehicleEmbed(vehicle: Vehicle): EmbedBuilder {
-		console.log(vehicle)
 		const embed = new EmbedBuilder()
 			.setTitle(vehicle.name ?? ' - ')
 			.setDescription(vehicle.description ?? ' - ')
