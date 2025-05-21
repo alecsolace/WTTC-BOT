@@ -6,7 +6,7 @@ import { Database, Logger, Stats } from '@/services'
 import { BaseController } from '@/utils/classes'
 import { isInMaintenance, resolveDependencies } from '@/utils/functions'
 
-import { DevAuthenticated } from '../middlewares/devAuthenticated'
+import { DevAuthenticated } from '@/api/middlewares/devAuthenticated'
 
 @Controller('/health')
 export class HealthController extends BaseController {
