@@ -20,7 +20,6 @@ export class BotController extends BaseController {
 
 	private client: Client
 
-	// test
 	private db: Database
 
 	constructor() {
