@@ -16,9 +16,7 @@ services:
         - ./database:/app/database
         - ./logs/:/app/logs
         - ./assets:/app/assets
-    restart: always
-    networks:
-      - dev
+    restart: unless-stopped
     # depends_on:
     #   - database
 

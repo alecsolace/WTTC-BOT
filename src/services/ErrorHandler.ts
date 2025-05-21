@@ -1,8 +1,5 @@
 import process from 'node:process'
 
-import { CommandInteraction } from 'discord.js'
-import { ArgsOf, SimpleCommandMessage } from 'discordx'
-
 import { Service } from '@/decorators'
 import { Logger } from '@/services'
 import { BaseError } from '@/utils/classes'
@@ -36,15 +33,6 @@ export class ErrorHandler {
 			// log the error
 			this.logger.logError(error, 'unhandledRejection')
 		})
-	}
-
-	async handleError(command: CommandInteraction, error: Error | unknown) {
-		if (error instanceof Error && error.message) {
-			await command.editReply(error.message)
-		} else {
-			await command.editReply('An error occurred while processing your command.')
-		}
-		console.error(error)
 	}
 
 }
