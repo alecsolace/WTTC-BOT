@@ -1,23 +1,23 @@
-import { Middleware } from "@tsed/common"
-import { InternalServerError } from "@tsed/exceptions"
-import axios from "axios"
+import { Middleware } from '@tsed/common'
+import { InternalServerError } from '@tsed/exceptions'
+import { Client } from 'discordx'
 
-import { apiConfig } from "@configs"
-
-const baseUrl = `http://127.0.0.1:${apiConfig.port}`
+import { resolveDependencies } from '@/utils/functions'
 
 @Middleware()
 export class BotOnline {
 
-    async use() {
+	private client: Client
 
-        const { data } = await axios.get(`${baseUrl}/health/check`, {
-            params: {
-                logIgnore: true
-            }
-        })
-    
-        if (!data?.online) throw new InternalServerError('Bot is offline')
-    }
+	constructor() {
+		resolveDependencies([Client]).then(([client]) => {
+			this.client = client
+		})
+	}
+
+	async use() {
+		if (this.client.user?.presence.status === 'offline')
+			throw new InternalServerError('Bot is offline')
+	}
 
 }

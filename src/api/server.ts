@@ -1,67 +1,66 @@
-import { Inject, PlatformAcceptMimesMiddleware, PlatformApplication } from "@tsed/common"
-import { PlatformExpress } from "@tsed/platform-express"
 import '@tsed/swagger'
-import { singleton } from "tsyringe"
-import bodyParser from "body-parser"
 
-import * as controllers from "@api/controllers"
-import { Log } from "@api/middlewares"
-import { MikroORM, UseRequestContext } from "@mikro-orm/core"
-import { Database, PluginsManager, Store } from "@services"
+import { CreateRequestContext, MikroORM } from '@mikro-orm/core'
+import { Inject, PlatformAcceptMimesMiddleware, PlatformApplication } from '@tsed/common'
+import { PlatformExpress } from '@tsed/platform-express'
+import bodyParser from 'body-parser'
 
-@singleton()
+import * as controllers from '@/api/controllers'
+import { Log } from '@/api/middlewares'
+import { Service } from '@/decorators'
+import { env } from '@/env'
+import { Database, PluginsManager, Store } from '@/services'
+
+@Service()
 export class Server {
 
-    @Inject() app: PlatformApplication
-    
-    orm: MikroORM
+	@Inject() app: PlatformApplication
 
-    constructor(
-        private pluginsManager: PluginsManager,
-        private store: Store,
-        db: Database
-    ) {
-        this.orm = db.orm
-    }
+	orm: MikroORM
 
-    $beforeRoutesInit() {
-        
-        this.app
-            .use(bodyParser.json())
-            .use(bodyParser.urlencoded({extended: true}))
-            .use(Log)
-            .use(PlatformAcceptMimesMiddleware)
+	constructor(
+		private pluginsManager: PluginsManager,
+		private store: Store,
+		db: Database
+	) {
+		this.orm = db.orm
+	}
 
-        return null
-    }
+	$beforeRoutesInit() {
+		this.app
+			.use(bodyParser.json())
+			.use(bodyParser.urlencoded({ extended: true }))
+			.use(Log)
+			.use(PlatformAcceptMimesMiddleware)
 
-    @UseRequestContext()
-    async start(): Promise<void> {
+		return null
+	}
 
-        const platform = await PlatformExpress.bootstrap(Server, {
-            rootDir: __dirname,
-            httpPort: parseInt(process.env['API_PORT']) || 4000,
-            httpsPort: false,
-            acceptMimes: ['application/json'],
-            mount: {
-                '/': [...Object.values(controllers), ...this.pluginsManager.getControllers()]
-            },
-            swagger: [
-                {
-                    path: '/docs',
-                    specVersion: '3.0.1'
-                }
-            ],
-            logger: {
-                level: 'warn',
-                logRequest: false,
-                disableRoutesSummary: true
-            }
-        })
+	@CreateRequestContext()
+	async start(): Promise<void> {
+		const platform = await PlatformExpress.bootstrap(Server, {
+			rootDir: __dirname,
+			httpPort: env.API_PORT,
+			httpsPort: false,
+			acceptMimes: ['application/json'],
+			mount: {
+				'/': [...Object.values(controllers), ...this.pluginsManager.getControllers()],
+			},
+			swagger: [
+				{
+					path: '/docs',
+					specVersion: '3.0.1',
+				},
+			],
+			logger: {
+				level: 'warn',
+				disableRoutesSummary: true,
+			},
+		})
 
-        platform.listen().then(() => {
-            
-            this.store.update('ready', (e) => ({ ...e, api: true }))
-        })
-    }
+		platform.listen().then(() => {
+			this.store.update('ready', e => ({ ...e, api: true }))
+		})
+	}
+
 }
