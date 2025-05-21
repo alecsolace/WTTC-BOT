@@ -14,7 +14,7 @@ import { Ship } from './Ship'
 // ===========================================
 // ================= Entity ==================
 // ===========================================
-@Entity({ customRepository: () => ManufacturerRepository })
+@Entity({ repository: () => ManufacturerRepository })
 export class Manufacturer extends CustomBaseEntity {
 
 	[EntityRepositoryType]?: ManufacturerRepository
@@ -54,3 +54,4 @@ export class ManufacturerRepository extends EntityRepository<Manufacturer> {
 	}
 
 }
+

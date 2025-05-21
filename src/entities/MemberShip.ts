@@ -13,7 +13,7 @@ import { Member, Ship } from '@/entities'
 // ================= Entity ==================
 // ===========================================
 
-@Entity({ customRepository: () => MemberShipRepository })
+@Entity({ repository: () => MemberShipRepository })
 export class MemberShip {
 
 	[EntityRepositoryType]?: MemberShipRepository

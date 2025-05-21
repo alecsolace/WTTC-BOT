@@ -14,7 +14,7 @@ import { MemberShip } from './MemberShip'
 // ===========================================
 // ================= Entity ==================
 // ===========================================
-@Entity({ customRepository: () => MemberRepository })
+@Entity({ repository: () => MemberRepository })
 export class Member extends CustomBaseEntity {
 
 	[EntityRepositoryType]?: MemberRepository

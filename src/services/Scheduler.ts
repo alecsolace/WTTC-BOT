@@ -1,4 +1,5 @@
 import { CronJob } from 'cron'
+import { SyncService } from './SyncService'
 
 import { Service } from '@/decorators'
 
@@ -29,6 +30,15 @@ export class Scheduler {
 
 	startAllJobs() {
 		this._jobs.forEach(job => job.start())
+	}
+
+	initializeSyncJob(syncService: SyncService) {
+		// Runs every day at 03:00 AM
+		const job = new CronJob('0 3 * * *', async () => {
+			await syncService.syncAll();
+		});
+		this.addJob('syncAllJob', job);
+		this.startJob('syncAllJob');
 	}
 
 }

@@ -103,7 +103,7 @@ export class Google {
     if (!ship) {
       // Create new ship
       ship = new Ship(manufacturer, shipData.model);
-      await this.db.get(Ship).persistAndFlush(ship);
+      await this.db.em.persistAndFlush(ship);
       this.logger.log(`Ship ${shipData.model} added`, "info");
     }
   }
@@ -128,7 +128,7 @@ export class Google {
     if (!memberShip) {
       // If the member does not own this ship, create a new MemberShip
       memberShip = new MemberShip(owner, ship, shipData.name);
-      await this.db.get(MemberShip).persistAndFlush(memberShip);
+      await this.db.em.persistAndFlush(memberShip);
       this.logger.log(
         `Ship ${shipData.model} added to member ${shipData.owner}`,
         "info"
