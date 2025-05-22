@@ -65,6 +65,11 @@ const en = {
 			DESCRIPTION: 'Pong!',
 			MESSAGE: '{member:string} Pong! The message round-trip took {time:number}ms.{heartbeat:string}',
 		},
+		SYNC: {
+			DESCRIPTION: 'Manually synchronize with Google Docs',
+			SUCCESS: 'Synchronization completed successfully.',
+			ERROR: 'Error during synchronization: {error}',
+		},
 	},
 } satisfies BaseTranslation
 

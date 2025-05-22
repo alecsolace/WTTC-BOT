@@ -6,7 +6,9 @@ export type BaseTranslation = BaseTranslationType
 export type BaseLocale = 'en'
 
 export type Locales =
+	| 'de'
 	| 'en'
+	| 'es'
 	| 'fr'
 	| 'ru'
 	| 'uk'
@@ -171,6 +173,21 @@ type RootTranslation = {
 			 */
 			MESSAGE: RequiredParams<'heartbeat' | 'member' | 'time'>
 		}
+		SYNC: {
+			/**
+			 * M​a​n​u​a​l​l​y​ ​s​y​n​c​h​r​o​n​i​z​e​ ​w​i​t​h​ ​G​o​o​g​l​e​ ​D​o​c​s
+			 */
+			DESCRIPTION: string
+			/**
+			 * S​y​n​c​h​r​o​n​i​z​a​t​i​o​n​ ​c​o​m​p​l​e​t​e​d​ ​s​u​c​c​e​s​s​f​u​l​l​y​.
+			 */
+			SUCCESS: string
+			/**
+			 * E​r​r​o​r​ ​d​u​r​i​n​g​ ​s​y​n​c​h​r​o​n​i​z​a​t​i​o​n​:​ ​{​e​r​r​o​r​}
+			 * @param {unknown} error
+			 */
+			ERROR: RequiredParams<'error'>
+		}
 	}
 }
 
@@ -321,6 +338,20 @@ export type TranslationFunctions = {
 			 * {member} Pong! The message round-trip took {time}ms.{heartbeat}
 			 */
 			MESSAGE: (arg: { heartbeat: string, member: string, time: number }) => LocalizedString
+		}
+		SYNC: {
+			/**
+			 * Manually synchronize with Google Docs
+			 */
+			DESCRIPTION: () => LocalizedString
+			/**
+			 * Synchronization completed successfully.
+			 */
+			SUCCESS: () => LocalizedString
+			/**
+			 * Error during synchronization: {error}
+			 */
+			ERROR: (arg: { error: unknown }) => LocalizedString
 		}
 	}
 }

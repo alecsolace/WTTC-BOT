@@ -8,6 +8,7 @@ export * from './Scheduler'
 export * from './Pastebin'
 export * from './PluginsManager'
 export * from './EventManager'
-export * from "./Google";
-export * from "./Wiki";
-export * from "./VehicleService";
+export * from './Google'
+export * from './Wiki'
+export * from './VehicleService'
+export * from './SyncService'

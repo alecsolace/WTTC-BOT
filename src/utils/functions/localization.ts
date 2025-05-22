@@ -22,8 +22,8 @@ export function setOptionsLocalization<K extends SanitizedOptions & { name?: str
 
 	if (!options[target as keyof typeof options]) {
 		options[target as keyof typeof options]
-            = getLocalizedInfo(target.toUpperCase() as 'NAME' | 'DESCRIPTION', localizationSource)?.[generalConfig.defaultLocale]
-            || (target === 'name' ? nameFallback : undefined)
+			= getLocalizedInfo(target.toUpperCase() as 'NAME' | 'DESCRIPTION', localizationSource)?.[generalConfig.defaultLocale]
+			|| (target === 'name' ? nameFallback : undefined)
 	}
 
 	return options
@@ -64,7 +64,7 @@ export function setFallbackDescription<K extends SanitizedOptions>(options: K & 
 		options.descriptionLocalizations = {}
 
 	for (const locale of locales)
-		options.descriptionLocalizations[locale] = L[locale].SHARED.NO_COMMAND_DESCRIPTION()
+		(options.descriptionLocalizations as Record<Locales, string>)[locale] = L[locale].SHARED.NO_COMMAND_DESCRIPTION()
 
 	return sanitizeLocales(options)
 }
