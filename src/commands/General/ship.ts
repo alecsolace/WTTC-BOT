@@ -1,15 +1,13 @@
 import { Category } from '@discordx/utilities'
 import {
-	ApplicationCommandOptionType,
 	AutocompleteFocusedOption,
 	AutocompleteInteraction,
 	CommandInteraction,
 	EmbedBuilder,
 } from 'discord.js'
-import { Client } from 'discordx'
 import { Vehicle } from 'src/utils/types/vehicle'
 
-import { Discord, Injectable, Slash, SlashOption } from '@/decorators'
+import { Discord, Injectable, Slash } from '@/decorators'
 import { Manufacturer, Ship } from '@/entities'
 import { UnknownReplyError } from '@/errors'
 import { Guard } from '@/guards'
@@ -29,25 +27,7 @@ export default class ShipCommand {
 	})
 	@Guard()
 	async ship(
-        @SlashOption({
-        	name: 'manufacturer',
-        	type: ApplicationCommandOptionType.String,
-        	required: true,
-        	autocomplete: true,
-        	description: 'The manufacturer of the ship',
-        })
-            brand: string,
-        @SlashOption({
-        	name: 'model',
-        	type: ApplicationCommandOptionType.String,
-        	required: true,
-        	autocomplete: true,
-        	description: 'The model of the ship',
-        })
-            model: string,
-            interaction: CommandInteraction | AutocompleteInteraction,
-            client: Client,
-            { localize }: InteractionData
+		interaction: CommandInteraction
 	) {
 		if (interaction instanceof AutocompleteInteraction) {
 			const focusedOption: AutocompleteFocusedOption = this.getFocusedOption(interaction)

@@ -20,11 +20,12 @@ export class SyncService {
 			manufacturers: await this.syncManufacturers(),
 			ships: await this.syncShips(),
 		}
-		return anomalies;
+
+		return anomalies
 	}
 
 	async syncMembers() {
-		const conflicts: any[] = [];
+		const conflicts: any[] = []
 		try {
 			// Get members from Sheets (index 3, headerRow 3, column "MEMBER")
 			await this.sheets.accessSpreadsheet()
@@ -78,11 +79,12 @@ export class SyncService {
 			this.logger.log(`Error syncing members: ${errMsg}`, 'error')
 			conflicts.push({ type: 'error', error: errMsg })
 		}
-		return conflicts;
+
+		return conflicts
 	}
 
 	async syncManufacturers() {
-		const conflicts: any[] = [];
+		const conflicts: any[] = []
 		try {
 			// Get manufacturers from Sheets (index 2, headerRow 3, column "Manufacturer")
 			await this.sheets.accessSpreadsheet()
@@ -136,11 +138,12 @@ export class SyncService {
 			this.logger.log(`Error syncing manufacturers: ${errMsg}`, 'error')
 			conflicts.push({ type: 'error', error: errMsg })
 		}
-		return conflicts;
+
+		return conflicts
 	}
 
 	async syncShips() {
-		const conflicts: any[] = [];
+		const conflicts: any[] = []
 		try {
 			await this.sheets.accessSpreadsheet()
 			const sheet = await this.sheets.getSheetByIndex(0)
@@ -158,8 +161,8 @@ export class SyncService {
 			const memberRepo = this.db.orm.em.getRepository(Member)
 			const manufacturerRepo = this.db.orm.em.getRepository(Manufacturer)
 			const memberShipRepo = this.db.orm.em.getRepository(MemberShip)
-			const dbShips = await shipRepo.findAll({ populate: ['manufacturer'] })
-			const dbMemberShips = await memberShipRepo.findAll({ populate: ['member', 'ship'] })
+			// const dbShips = await shipRepo.findAll({ populate: ['manufacturer'] })
+			// const dbMemberShips = await memberShipRepo.findAll({ populate: ['member', 'ship'] })
 
 			// Sincronizar ships y memberShips desde Sheets a DB
 			for (const shipData of sheetShips) {
@@ -196,7 +199,8 @@ export class SyncService {
 			this.logger.log(`Error syncing ships: ${errMsg}`, 'error')
 			conflicts.push({ type: 'error', error: errMsg })
 		}
-		return conflicts;
+
+		return conflicts
 	}
 
 }

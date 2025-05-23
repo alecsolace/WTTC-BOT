@@ -1,15 +1,13 @@
 import { Category } from '@discordx/utilities'
 import {
-	ApplicationCommandOptionType,
 	AutocompleteFocusedOption,
 	AutocompleteInteraction,
 	CommandInteraction,
 	EmbedBuilder,
 	EmbedField,
 } from 'discord.js'
-import { Client } from 'discordx'
 
-import { Discord, Injectable, Slash, SlashOption } from '@/decorators'
+import { Discord, Injectable, Slash } from '@/decorators'
 import { Manufacturer } from '@/entities'
 import { Guard } from '@/guards'
 import { Database, Logger, Wiki } from '@/services'
@@ -31,16 +29,7 @@ export default class BrandCommand {
 	})
 	@Guard()
 	async brand(
-    @SlashOption({
-    	name: 'manufacturer',
-    	type: ApplicationCommandOptionType.String,
-    	required: true,
-    	autocomplete: true,
-    })
-    brand: string,
-    interaction: CommandInteraction | AutocompleteInteraction,
-    client: Client,
-    { localize }: InteractionData
+		interaction: CommandInteraction
 	) {
 		if (interaction instanceof AutocompleteInteraction) {
 			const focusedOption: AutocompleteFocusedOption
