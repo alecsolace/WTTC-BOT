@@ -65,6 +65,20 @@ const fr = {
 			DESCRIPTION: 'Pong!',
 			MESSAGE: '{member} Pong! Le temps de réponse de la réponse était {time}ms.{heartbeat}',
 		},
+		SYNC: {
+			DESCRIPTION: 'Manually synchronize with Google Docs',
+			SUCCESS: 'Synchronization completed successfully.',
+			ERROR: 'Error during synchronization: {error}',
+			CONFLICTS_TITLE: 'Conflicts or anomalies detected during synchronization:',
+			MEMBERS_TITLE: 'Members',
+			MANUFACTURERS_TITLE: 'Manufacturers',
+			SHIPS_TITLE: 'Ships',
+			CONFLICT_ADD_DB: 'Added to database: {name}',
+			CONFLICT_ADD_SHEET: 'Added to Google Sheets: {name}',
+			CONFLICT_REMOVE_DB: 'Removed from database: {name}',
+			CONFLICT_REMOVE_SHEET: 'Removed from Google Sheets: {name}',
+			CONFLICT_ERROR: 'Error: {error}',
+		},
 	},
 } satisfies Translation
 

@@ -1,0 +1,11 @@
+# Copilot configuration: enforce i18n and English documentation
+
+rules:
+  - description: "All user-facing strings must use i18n/localization."
+    pattern: "(?<!localize\.|i18n\.|t\()(['\"]).+?\1"
+    severity: error
+    message: "User-facing strings must use i18n/localization."
+  - description: "All code documentation must be in English."
+    pattern: "@doc|@description|@param|@returns|/\*\*.*\*/"
+    severity: warning
+    message: "Documentation must be written in English."
