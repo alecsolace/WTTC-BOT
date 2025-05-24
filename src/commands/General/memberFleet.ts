@@ -7,7 +7,6 @@ import {
 	EmbedBuilder,
 	EmbedField,
 } from 'discord.js'
-import { Client } from 'discordx'
 
 import { Discord, Injectable, Slash, SlashOption } from '@/decorators'
 import { Member, Ship } from '@/entities'
@@ -19,7 +18,7 @@ import { Database } from '@/services'
 @Category('General')
 export default class MemberFleetCommand {
 
-	constructor(private db: Database) { }
+	constructor(private readonly db: Database) { }
 
 	@Slash({
 		name: 'memberfleet',
@@ -29,14 +28,12 @@ export default class MemberFleetCommand {
 	async memberFleet(
 		@SlashOption({
 			name: 'member',
+			description: 'Name of the member',
 			type: ApplicationCommandOptionType.String,
 			required: true,
 			autocomplete: true,
-		})
-		member: string,
-		interaction: CommandInteraction | AutocompleteInteraction,
-		client: Client,
-		{ localize }: InteractionData
+		}) member: string,
+			interaction: CommandInteraction | AutocompleteInteraction
 	) {
 		if (interaction instanceof AutocompleteInteraction) {
 			const focusedOption: AutocompleteFocusedOption
@@ -78,9 +75,7 @@ export default class MemberFleetCommand {
 		// Group memberShips by manufacturer
 		const groupedShips = memberShips.reduce((groups: any, ship: Ship) => {
 			const key = ship.manufacturer.name
-			if (!groups[key]) {
-				groups[key] = []
-			}
+			groups[key] ??= []
 			groups[key].push(ship)
 
 			return groups

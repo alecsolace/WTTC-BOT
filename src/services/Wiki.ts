@@ -12,10 +12,10 @@ export class Wiki {
 
 	async getManufacturer(manufacturer: string) {
 		const toolsResponse = await fetch(
-      `https://starcitizen.tools/rest.php/v1/search/page?q=${manufacturer}&limit=10`,
-      {
-      	method: 'GET',
-      }
+			`https://starcitizen.tools/rest.php/v1/search/page?q=${manufacturer}&limit=10`,
+			{
+				method: 'GET',
+			}
 		)
 		const toolsData = await toolsResponse.json()
 		console.log(toolsData)
@@ -25,20 +25,20 @@ export class Wiki {
 
 	async getVehicleData(vehicleName: string) {
 		const toolsResponse = await fetch(
-      `https://starcitizen.tools/rest.php/v1/search/page?q=${vehicleName}&limit=1`,
-      {
-      	method: 'GET',
-      }
+			`https://starcitizen.tools/rest.php/v1/search/page?q=${vehicleName}&limit=1`,
+			{
+				method: 'GET',
+			}
 		)
 		const toolsData: Search = await toolsResponse.json()
 		console.log(toolsData.pages[0].thumbnail)
 		const imageUrl = toolsData.pages[0].thumbnail?.url ?? ''
 		const response = await fetch(
-      `https://api.star-citizen.wiki/api/vehicles/${vehicleName}`,
-      {
-      	method: 'GET',
-      	headers: {},
-      }
+			`https://api.star-citizen.wiki/api/vehicles/${vehicleName}`,
+			{
+				method: 'GET',
+				headers: {},
+			}
 		)
 		const result = await response.json()
 		const vehicle: Vehicle = {

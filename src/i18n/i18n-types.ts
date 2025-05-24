@@ -187,6 +187,47 @@ type RootTranslation = {
 			 * @param {unknown} error
 			 */
 			ERROR: RequiredParams<'error'>
+			/**
+			 * C​o​n​f​l​i​c​t​s​ ​o​r​ ​a​n​o​m​a​l​i​e​s​ ​d​e​t​e​c​t​e​d​ ​d​u​r​i​n​g​ ​s​y​n​c​h​r​o​n​i​z​a​t​i​o​n​:
+			 */
+			CONFLICTS_TITLE: string
+			/**
+			 * M​e​m​b​e​r​s
+			 */
+			MEMBERS_TITLE: string
+			/**
+			 * M​a​n​u​f​a​c​t​u​r​e​r​s
+			 */
+			MANUFACTURERS_TITLE: string
+			/**
+			 * S​h​i​p​s
+			 */
+			SHIPS_TITLE: string
+			/**
+			 * A​d​d​e​d​ ​t​o​ ​d​a​t​a​b​a​s​e​:​ ​{​n​a​m​e​}
+			 * @param {unknown} name
+			 */
+			CONFLICT_ADD_DB: RequiredParams<'name'>
+			/**
+			 * A​d​d​e​d​ ​t​o​ ​G​o​o​g​l​e​ ​S​h​e​e​t​s​:​ ​{​n​a​m​e​}
+			 * @param {unknown} name
+			 */
+			CONFLICT_ADD_SHEET: RequiredParams<'name'>
+			/**
+			 * R​e​m​o​v​e​d​ ​f​r​o​m​ ​d​a​t​a​b​a​s​e​:​ ​{​n​a​m​e​}
+			 * @param {unknown} name
+			 */
+			CONFLICT_REMOVE_DB: RequiredParams<'name'>
+			/**
+			 * R​e​m​o​v​e​d​ ​f​r​o​m​ ​G​o​o​g​l​e​ ​S​h​e​e​t​s​:​ ​{​n​a​m​e​}
+			 * @param {unknown} name
+			 */
+			CONFLICT_REMOVE_SHEET: RequiredParams<'name'>
+			/**
+			 * E​r​r​o​r​:​ ​{​e​r​r​o​r​}
+			 * @param {unknown} error
+			 */
+			CONFLICT_ERROR: RequiredParams<'error'>
 		}
 	}
 }
@@ -352,6 +393,42 @@ export type TranslationFunctions = {
 			 * Error during synchronization: {error}
 			 */
 			ERROR: (arg: { error: unknown }) => LocalizedString
+			/**
+			 * Conflicts or anomalies detected during synchronization:
+			 */
+			CONFLICTS_TITLE: () => LocalizedString
+			/**
+			 * Members
+			 */
+			MEMBERS_TITLE: () => LocalizedString
+			/**
+			 * Manufacturers
+			 */
+			MANUFACTURERS_TITLE: () => LocalizedString
+			/**
+			 * Ships
+			 */
+			SHIPS_TITLE: () => LocalizedString
+			/**
+			 * Added to database: {name}
+			 */
+			CONFLICT_ADD_DB: (arg: { name: unknown }) => LocalizedString
+			/**
+			 * Added to Google Sheets: {name}
+			 */
+			CONFLICT_ADD_SHEET: (arg: { name: unknown }) => LocalizedString
+			/**
+			 * Removed from database: {name}
+			 */
+			CONFLICT_REMOVE_DB: (arg: { name: unknown }) => LocalizedString
+			/**
+			 * Removed from Google Sheets: {name}
+			 */
+			CONFLICT_REMOVE_SHEET: (arg: { name: unknown }) => LocalizedString
+			/**
+			 * Error: {error}
+			 */
+			CONFLICT_ERROR: (arg: { error: unknown }) => LocalizedString
 		}
 	}
 }

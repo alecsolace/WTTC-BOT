@@ -12,10 +12,10 @@ export class VehicleService {
 
 	async fetchToolsData(vehicleName: string): Promise<Search> {
 		const response = await fetch(
-      `https://starcitizen.tools/rest.php/v1/search/page?q=${vehicleName}&limit=1`,
-      {
-      	method: 'GET',
-      }
+			`https://starcitizen.tools/rest.php/v1/search/page?q=${vehicleName}&limit=1`,
+			{
+				method: 'GET',
+			}
 		)
 
 		return await response.json()
@@ -23,11 +23,11 @@ export class VehicleService {
 
 	async fetchVehicleData(vehicleName: string): Promise<any> {
 		const response = await fetch(
-      `https://api.star-citizen.wiki/api/vehicles/${vehicleName}`,
-      {
-      	method: 'GET',
-      	headers: {},
-      }
+			`https://api.star-citizen.wiki/api/vehicles/${vehicleName}`,
+			{
+				method: 'GET',
+				headers: {},
+			}
 		)
 
 		return await response.json()
