@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { BaseTranslation } from '../i18n-types'
+import type { Translation } from '../i18n-types'
 
 const es = {
 	COMMANDS: {
@@ -18,6 +18,6 @@ const es = {
 			CONFLICT_ERROR: 'Error: {error}',
 		},
 	},
-} satisfies BaseTranslation
+} satisfies Translation
 
 export default es

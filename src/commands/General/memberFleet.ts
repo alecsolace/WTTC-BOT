@@ -17,7 +17,7 @@ import { Database } from '@/services'
 @Category('General')
 export default class MemberFleetCommand {
 
-	constructor(private db: Database) {}
+	constructor(private db: Database) { }
 
 	@Slash({
 		name: 'memberfleet',
