@@ -1,5 +1,6 @@
 import { Category } from '@discordx/utilities'
 import {
+	ApplicationCommandOptionType,
 	AutocompleteFocusedOption,
 	AutocompleteInteraction,
 	CommandInteraction,
@@ -7,7 +8,7 @@ import {
 } from 'discord.js'
 import { Vehicle } from 'src/utils/types/vehicle'
 
-import { Discord, Injectable, Slash } from '@/decorators'
+import { Discord, Injectable, Slash, SlashOption } from '@/decorators'
 import { Manufacturer, Ship } from '@/entities'
 import { UnknownReplyError } from '@/errors'
 import { Guard } from '@/guards'
@@ -18,7 +19,7 @@ import { Database, VehicleService } from '@/services'
 @Injectable()
 export default class ShipCommand {
 
-	constructor(private vehicleService: VehicleService, private db: Database) {
+	constructor(private readonly vehicleService: VehicleService, private readonly db: Database) {
 	}
 
 	@Slash({
@@ -27,16 +28,30 @@ export default class ShipCommand {
 	})
 	@Guard()
 	async ship(
-		interaction: CommandInteraction
+		@SlashOption({
+			name: 'manufacturer',
+			description: 'Manufacturer of the ship',
+			type: ApplicationCommandOptionType.String,
+			required: false,
+			autocomplete: true,
+		}) manufacturer: string | undefined,
+		@SlashOption({
+			name: 'model',
+			description: 'Model or name of the ship',
+			type: ApplicationCommandOptionType.String,
+			required: true,
+			autocomplete: true,
+		}) model: string,
+		interaction: CommandInteraction | AutocompleteInteraction
 	) {
 		if (interaction instanceof AutocompleteInteraction) {
-			const focusedOption: AutocompleteFocusedOption = this.getFocusedOption(interaction)
+			const focusedOption = this.getFocusedOption(interaction)
 			let limitedArray: string[] = []
 			if (focusedOption.name === 'manufacturer') {
-				const manufacturer = await this.db.get(Manufacturer).findAutoComplete(focusedOption.value)
-				limitedArray = manufacturer.map(manufacturer => manufacturer.name)
+				const manufacturers = await this.db.get(Manufacturer).findAutoComplete(focusedOption.value)
+				limitedArray = manufacturers.map(m => m.name)
 			} else if (focusedOption.name === 'model') {
-				const ships = await this.db.get(Ship).findAutoCompleteWManufacturer(focusedOption.value, brand)
+				const ships = await this.db.get(Ship).findAutoCompleteWManufacturer(focusedOption.value, manufacturer ?? '')
 				limitedArray = ships.map(ship => ship.model)
 			}
 

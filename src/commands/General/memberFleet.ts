@@ -1,5 +1,6 @@
 import { Category } from '@discordx/utilities'
 import {
+	ApplicationCommandOptionType,
 	AutocompleteFocusedOption,
 	AutocompleteInteraction,
 	CommandInteraction,
@@ -7,7 +8,7 @@ import {
 	EmbedField,
 } from 'discord.js'
 
-import { Discord, Injectable, Slash } from '@/decorators'
+import { Discord, Injectable, Slash, SlashOption } from '@/decorators'
 import { Member, Ship } from '@/entities'
 import { Guard } from '@/guards'
 import { Database } from '@/services'
@@ -17,7 +18,7 @@ import { Database } from '@/services'
 @Category('General')
 export default class MemberFleetCommand {
 
-	constructor(private db: Database) { }
+	constructor(private readonly db: Database) { }
 
 	@Slash({
 		name: 'memberfleet',
@@ -25,11 +26,18 @@ export default class MemberFleetCommand {
 	})
 	@Guard()
 	async memberFleet(
-		interaction: CommandInteraction
+		@SlashOption({
+			name: 'member',
+			description: 'Name of the member',
+			type: ApplicationCommandOptionType.String,
+			required: true,
+			autocomplete: true,
+		}) member: string,
+			interaction: CommandInteraction | AutocompleteInteraction
 	) {
 		if (interaction instanceof AutocompleteInteraction) {
 			const focusedOption: AutocompleteFocusedOption
-        = interaction.options.getFocused(true)
+				= interaction.options.getFocused(true)
 
 			if (focusedOption.value.length <= 1) {
 				return interaction.respond([])
@@ -49,7 +57,7 @@ export default class MemberFleetCommand {
 		const memberShips = await this.findShips(Number(member))
 		if (memberShips.length === 0) {
 			await interaction.editReply(
-        `Could not find ships for member with id: ${member}`
+				`Could not find ships for member with id: ${member}`
 			)
 
 			return
@@ -61,15 +69,13 @@ export default class MemberFleetCommand {
 			.setTimestamp()
 			.setFooter({ text: 'WTTC-Bot' })
 			.setDescription(
-        `The ships owned by ${memberShips[0].memberShips[0].member.name} (${memberShips.length})`
+				`The ships owned by ${memberShips[0].memberShips[0].member.name} (${memberShips.length})`
 			)
 
 		// Group memberShips by manufacturer
 		const groupedShips = memberShips.reduce((groups: any, ship: Ship) => {
 			const key = ship.manufacturer.name
-			if (!groups[key]) {
-				groups[key] = []
-			}
+			groups[key] ??= []
 			groups[key].push(ship)
 
 			return groups
