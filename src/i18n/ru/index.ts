@@ -65,6 +65,11 @@ const ru = {
 			DESCRIPTION: 'Тук-тук!',
 			MESSAGE: '{member} Что нужно? Было потрачено {time} милисекунд на генерацию ответа. {heartbeat}',
 		},
+		SYNC: {
+			DESCRIPTION: 'Синхронизировать команды бота.',
+			SUCCESS: 'Команды синхронизированы.',
+			ERROR: 'Произошла ошибка при синхронизации команд: {error}',
+		},
 	},
 } satisfies Translation
 

@@ -3,7 +3,6 @@ import {
 	Entity,
 	EntityRepository,
 	EntityRepositoryType,
-	Loaded,
 	ManyToOne,
 	OneToMany,
 	PrimaryKey,
@@ -12,7 +11,6 @@ import {
 
 import { CustomBaseEntity } from './BaseEntity'
 import { Manufacturer } from './Manufacturer'
-import { Member } from './Member'
 import { MemberShip } from './MemberShip'
 
 // ===========================================

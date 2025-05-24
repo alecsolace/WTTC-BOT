@@ -49,15 +49,15 @@ const envMikroORMConfig = {
 		// user: env.DATABASE_USER,
 		// password: env.DATABASE_PASSWORD,
 
-        /**
-         * MySQL
-         */
-        // driver: MySqlDriver,
-        // dbName: env.DATABASE_NAME,
-        // host: env.DATABASE_HOST,
-        // port: Number(env.DATABASE_PORT),
-        // user: env.DATABASE_USER,
-        // password: env.DATABASE_PASSWORD,
+		/**
+		 * MySQL
+		 */
+		// driver: MySqlDriver,
+		// dbName: env.DATABASE_NAME,
+		// host: env.DATABASE_HOST,
+		// port: Number(env.DATABASE_PORT),
+		// user: env.DATABASE_USER,
+		// password: env.DATABASE_PASSWORD,
 
 		/**
 		 * MariaDB

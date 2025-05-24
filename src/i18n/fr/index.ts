@@ -65,6 +65,11 @@ const fr = {
 			DESCRIPTION: 'Pong!',
 			MESSAGE: '{member} Pong! Le temps de réponse de la réponse était {time}ms.{heartbeat}',
 		},
+		SYNC: {
+			DESCRIPTION: 'Synchronise les commandes du bot.',
+			SUCCESS: 'Commandes synchronisées avec succès!',
+			ERROR: 'Erreur lors de la synchronisation des commandes: {error}',
+		},
 	},
 } satisfies Translation
 

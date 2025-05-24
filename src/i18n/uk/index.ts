@@ -65,6 +65,11 @@ const uk = {
 			DESCRIPTION: "Перевірка зв'язку!",
 			MESSAGE: '{member} Чути добре! Генерація повідомлення зайняла {time} мілісекунд. {heartbeat}',
 		},
+		SYNC: {
+			DESCRIPTION: 'Синхронізувати команди бота.',
+			SUCCESS: 'Команди синхронізовані!',
+			ERROR: 'Сталася помилка під час синхронізації команд: {error}',
+		},
 	},
 } satisfies Translation
 

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { BaseTranslation } from '../i18n-types'
+import type { Translation } from '../i18n-types'
 
 const de = {
 	COMMANDS: {
@@ -9,6 +9,6 @@ const de = {
 			ERROR: 'Fehler während der Synchronisierung: {error}',
 		},
 	},
-} satisfies BaseTranslation
+} satisfies Translation
 
 export default de

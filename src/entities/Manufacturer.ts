@@ -54,4 +54,3 @@ export class ManufacturerRepository extends EntityRepository<Manufacturer> {
 	}
 
 }
-
